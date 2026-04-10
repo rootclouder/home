@@ -1,0 +1,133 @@
+import { useEffect, useState } from 'react'
+import { useStore } from '../../store'
+
+export default function Settings() {
+  const { token } = useStore()
+  const [settings, setSettings] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
+
+  const gradientPresets = [
+    { name: '暗夜黑', value: 'linear-gradient(to right, #0f172a, #000000)' },
+    { name: '晨曦紫', value: 'linear-gradient(to right, #6366f1, #a855f7, #ec4899)' },
+    { name: '海洋蓝', value: 'linear-gradient(to right, #0ea5e9, #06b6d4)' },
+    { name: '森林绿', value: 'linear-gradient(to right, #10b981, #14b8a6)' },
+    { name: '落日橙', value: 'linear-gradient(to right, #f97316, #ef4444)' },
+    { name: '樱花粉', value: 'linear-gradient(to right, #f43f5e, #ec4899)' },
+  ]
+
+  useEffect(() => {
+    fetch('/api/settings').then(r => r.json()).then(setSettings)
+  }, [])
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+    try {
+      await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(settings)
+      })
+      setMessage('保存成功')
+    } catch {
+      setMessage('保存失败')
+    }
+    setLoading(false)
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSettings({ ...settings, [e.target.name]: e.target.value })
+  }
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    if (!e.target.files?.[0]) return
+    const formData = new FormData()
+    formData.append('file', e.target.files[0])
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    })
+    const data = await res.json()
+    if (data.url) {
+      setSettings({ ...settings, [field]: data.url })
+    }
+  }
+
+  if (!settings) return <div>Loading...</div>
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">基础设置</h1>
+      <form onSubmit={handleSave} className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl p-8 border border-zinc-100 dark:border-zinc-800 space-y-6">
+        {message && <div className="text-green-600 bg-green-50 p-3 rounded-lg text-sm">{message}</div>}
+        
+        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">站点标题</label>
+            <input type="text" name="siteTitle" value={settings.siteTitle} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">主题色 (渐变预设)</label>
+            <div className="grid grid-cols-3 gap-3">
+              {gradientPresets.map((preset) => (
+                <button
+                  key={preset.name}
+                  type="button"
+                  onClick={() => setSettings({ ...settings, themeColor: preset.value })}
+                  className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all ${
+                    settings.themeColor === preset.value 
+                      ? 'border-zinc-900 dark:border-white shadow-md scale-105' 
+                      : 'border-transparent bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                  }`}
+                >
+                  <div 
+                    className="w-full h-8 rounded-xl mb-2 shadow-sm" 
+                    style={{ background: preset.value }}
+                  />
+                  <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{preset.name}</span>
+                </button>
+              ))}
+            </div>
+            <div className="mt-4">
+              <label className="block text-xs text-zinc-500 mb-1">自定义 CSS 渐变值</label>
+              <input type="text" name="themeColor" value={settings.themeColor} onChange={handleChange} className="block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow text-sm" placeholder="例如: linear-gradient(to right, #000, #fff)" />
+            </div>
+          </div>
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">主页 Hero 标题</label>
+            <input type="text" name="heroTitle" value={settings.heroTitle} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" />
+          </div>
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">主页 Hero 副标题</label>
+            <input type="text" name="heroSubtitle" value={settings.heroSubtitle} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">头像上传</label>
+            <div className="mt-1 flex items-center space-x-4">
+              {settings.avatarUrl && <img src={settings.avatarUrl} alt="Avatar" className="h-12 w-12 rounded-full object-cover" />}
+              <input type="file" onChange={e => handleUpload(e, 'avatarUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Hero 壁纸上传 (图片/GIF)</label>
+            <div className="mt-1 flex items-center space-x-4">
+              {settings.heroBgUrl && <img src={settings.heroBgUrl} alt="Hero BG" className="h-12 w-24 rounded-xl object-cover" />}
+              <input type="file" onChange={e => handleUpload(e, 'heroBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-end">
+          <button type="submit" disabled={loading} className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium rounded-2xl hover:bg-zinc-800 transition-colors disabled:opacity-50">
+            {loading ? '保存中...' : '保存更改'}
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
