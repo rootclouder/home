@@ -115,19 +115,8 @@ export default function Home() {
               {settings.heroSubtitle}
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 animate-fade-in-up" style={{ animationDelay: '500ms', animationFillMode: 'both' }}>
-              <a 
-                href="#projects" 
-                className={`group relative px-8 py-4 rounded-full text-white font-bold text-lg hover:scale-105 transition-all duration-300 flex items-center shadow-2xl hover:shadow-[var(--primary)]/20 ${settings.themeColor?.includes('gradient') ? 'bg-primary-gradient' : 'bg-[var(--primary)]'}`}
-              >
-                <span className="relative z-10 flex items-center">
-                  查看精选作品 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </a>
-              <a href="/articles" className="px-8 py-4 rounded-full text-zinc-600 dark:text-zinc-300 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
-                阅读技术随笔
-              </a>
-            </div>
+            {/* 这里原本是 "查看精选作品" 和 "阅读技术随笔" 的按钮链接 */}
+            {/* <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 animate-fade-in-up" style={{ animationDelay: '500ms', animationFillMode: 'both' }}> ... </div> */}
           </div>
           
           {settings.avatarUrl && (
