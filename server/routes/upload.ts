@@ -24,11 +24,17 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
     const safeName = originalName.replace(/[^a-zA-Z0-9.-]/g, '_')
     const filename = `${Date.now()}-${safeName}`
 
+    // 检查是否有 token (在开发环境或未正确注入 Vercel 环境变量时)
+    const token = process.env.BLOB_READ_WRITE_TOKEN
+    if (!token) {
+      console.error('Missing BLOB_READ_WRITE_TOKEN. Please check your Vercel project settings.')
+      return res.status(500).json({ error: 'Storage configuration error: Missing token' })
+    }
+
     // 上传到 Vercel Blob
     const blob = await put(`uploads/${filename}`, req.file.buffer, {
       access: 'public',
-      // 这里确保使用了正确的 token
-      token: process.env.BLOB_READ_WRITE_TOKEN
+      token: token // 显式传递 token
     })
 
     res.json({ url: blob.url })
