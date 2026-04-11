@@ -1,8 +1,8 @@
-import { Router } from 'express'
+import express from 'express'
 import { prisma } from '../db.js'
 import { authenticate } from '../middleware/auth.js'
 
-const router = Router()
+const router = express.Router()
 
 router.get('/', async (req, res) => {
   const { categoryId } = req.query
