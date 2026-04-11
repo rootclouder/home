@@ -39,8 +39,8 @@ app.use('/api/categories', categoriesRoutes)
 app.use('/api/posts', postsRoutes)
 app.use('/api/upload', uploadRoutes)
 
-// Serve uploads statically
-app.use('/uploads', express.static(path.join(_dirname, '../uploads')))
+// Serve uploads statically (only needed for local development if not using Blob, but we use Blob now)
+// app.use('/uploads', express.static(path.join(_dirname, '../uploads')))
 
 /**
  * health
