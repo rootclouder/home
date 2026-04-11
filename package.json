@@ -6,7 +6,7 @@
   "scripts": {
     "client:dev": "vite",
     "postinstall": "prisma generate",
-    "build": "prisma db push --accept-data-loss && prisma db seed && tsc -b && vite build",
+    "build": "prisma db push --accept-data-loss && npx tsx prisma/seed.ts && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "check": "tsc --noEmit",
@@ -66,5 +66,8 @@
     "vite": "^6.3.5",
     "vite-plugin-trae-solo-badge": "^1.0.0",
     "vite-tsconfig-paths": "^5.1.4"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
