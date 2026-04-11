@@ -6,7 +6,7 @@
   "scripts": {
     "client:dev": "vite",
     "postinstall": "prisma generate",
-    "build": "tsc -b && vite build",
+    "build": "prisma db push --accept-data-loss && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "check": "tsc --noEmit",
@@ -24,6 +24,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.511.0",
     "multer": "^2.1.1",

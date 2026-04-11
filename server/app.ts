@@ -2,6 +2,7 @@
 /**
  * This is a API server
  */
+import 'express-async-errors'
 
 import express from 'express'
 import { NextFunction, Request, Response } from 'express'
@@ -58,9 +59,11 @@ app.use(
  * error handler middleware
  */
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error('Server error:', error)
   res.status(500).json({
     success: false,
     error: 'Server internal error',
+    message: error.message
   })
 })
 

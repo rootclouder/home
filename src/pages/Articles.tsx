@@ -22,13 +22,13 @@ export default function Articles() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/settings').then(r => r.json()),
-      fetch('/api/categories').then(r => r.json()),
-      fetch('/api/posts').then(r => r.json())
+      fetch('/api/settings').then(r => r.ok ? r.json() : null),
+      fetch('/api/categories').then(r => r.ok ? r.json() : []),
+      fetch('/api/posts').then(r => r.ok ? r.json() : [])
     ]).then(([s, c, po]) => {
-      setSettings(s)
-      setCategories(c)
-      setPosts(po)
+      setSettings(s || { siteTitle: 'My Project', themeColor: '#000' })
+      setCategories(c || [])
+      setPosts(po || [])
       
       if (s?.themeColor) {
         document.documentElement.style.setProperty('--primary', s.themeColor)
@@ -49,6 +49,9 @@ export default function Articles() {
           document.head.appendChild(style)
         }
       }
+    }).catch(e => {
+      console.error('Failed to load data:', e)
+      setSettings({ siteTitle: 'Error', themeColor: '#000' })
     })
   }, [])
 

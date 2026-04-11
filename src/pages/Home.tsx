@@ -12,15 +12,15 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/settings').then(r => r.json()),
-      fetch('/api/projects').then(r => r.json()),
-      fetch('/api/categories').then(r => r.json()),
-      fetch('/api/posts').then(r => r.json())
+      fetch('/api/settings').then(r => r.ok ? r.json() : null),
+      fetch('/api/projects').then(r => r.ok ? r.json() : []),
+      fetch('/api/categories').then(r => r.ok ? r.json() : []),
+      fetch('/api/posts').then(r => r.ok ? r.json() : [])
     ]).then(([s, p, c, po]) => {
-      setSettings(s)
-      setProjects(p)
-      setCategories(c)
-      setPosts(po)
+      setSettings(s || { siteTitle: 'My Project', heroTitle: 'Welcome', heroSubtitle: 'Setup your site in admin panel', themeColor: '#000' })
+      setProjects(p || [])
+      setCategories(c || [])
+      setPosts(po || [])
       
       // Inject CSS variable for theme color
       if (s?.themeColor) {
@@ -43,6 +43,9 @@ export default function Home() {
           document.head.appendChild(style)
         }
       }
+    }).catch(e => {
+      console.error('Failed to load data:', e)
+      setSettings({ siteTitle: 'Error', heroTitle: 'Service Unavailable', heroSubtitle: 'Could not connect to API', themeColor: '#f00' })
     })
   }, [])
 
