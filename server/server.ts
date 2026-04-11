@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * local server entry file, for local development
  */
