@@ -32,8 +32,10 @@ router.post('/', authenticate, upload.single('file'), async (req, res) => {
     }
 
     // 上传到 Vercel Blob
+    // 网站的头像、壁纸、文章配图等必须是任何人都能公开访问查看的
+    // 所以必须强制要求使用 public 权限的 Vercel Blob
     const blob = await put(`uploads/${filename}`, req.file.buffer, {
-      access: 'public',
+      access: 'public', 
       token: token // 显式传递 token
     })
 
