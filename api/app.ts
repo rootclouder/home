@@ -3,7 +3,7 @@
  */
 
 import express from 'express'
-import type { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import cors from 'cors'
 import path from 'path'
 import dotenv from 'dotenv'
@@ -15,9 +15,8 @@ import categoriesRoutes from './routes/categories.js'
 import postsRoutes from './routes/posts.js'
 import uploadRoutes from './routes/upload.js'
 
-// for esm mode
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// fallback for CommonJS or ESM
+const _dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
 
 // load env
 dotenv.config()
@@ -39,7 +38,7 @@ app.use('/api/posts', postsRoutes)
 app.use('/api/upload', uploadRoutes)
 
 // Serve uploads statically
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
+app.use('/uploads', express.static(path.join(_dirname, '../uploads')))
 
 /**
  * health
