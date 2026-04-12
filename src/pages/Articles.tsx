@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Github, Twitter, Mail, ArrowRight, ArrowLeft, X } from 'lucide-react'
+import { Github, Twitter, Mail, ArrowRight, ArrowLeft, X, FileText } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
 
 export default function Articles() {
@@ -329,6 +329,3 @@ export default function Articles() {
     </div>
   )
 }
-
-// Temporary import just for the icon in empty state
-import { FileText } from 'lucide-react'
