@@ -88,32 +88,24 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden bg-white dark:bg-zinc-950">
+      <section className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden">
         {/* Subtle background pattern/mesh */}
         <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
-        
-        {settings.heroBgUrl && (
-          <div className="absolute inset-0 z-0">
-            <img src={settings.heroBgUrl} alt="Background" className="w-full h-full object-cover opacity-80 mix-blend-overlay" />
-            <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/80 to-white dark:from-zinc-950/60 dark:via-zinc-950/80 dark:to-zinc-950 backdrop-blur-[2px]"></div>
-          </div>
-        )}
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-16 lg:gap-24">
           <div className="flex-1 text-center lg:text-left mt-8 lg:mt-0">
-            {settings.badgeText && (
+            {/* {settings.badgeText && (
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-8 tracking-wide animate-fade-in-up" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
                 <span className="w-2 h-2 rounded-full mr-2 animate-pulse" style={{ backgroundColor: 'var(--primary)' }}></span>
                 {settings.badgeText}
               </div>
-            )}
+            )} */}
             
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
-              <span className="block text-zinc-900 dark:text-white mb-2">{settings.heroTitle}</span>
               <span className="block text-transparent bg-clip-text" style={settings.themeColor?.includes('gradient') ? { backgroundImage: settings.themeColor } : { backgroundColor: 'var(--primary)', backgroundImage: `linear-gradient(to right, var(--primary), var(--primary))` }}>
                 <Typewriter
                   options={{
-                    strings: ['独立开发者', '全栈工程师', '开源爱好者'],
+                    strings: settings.heroTitle ? settings.heroTitle.split(',').map((s: string) => s.trim()) : ['独立开发者', '全栈工程师', '开源爱好者'],
                     autoStart: true,
                     loop: true,
                     wrapperClassName: 'pixel-font',
@@ -148,7 +140,7 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-32 bg-zinc-50 dark:bg-zinc-900/30 relative z-10">
+      <section id="projects" className="py-32 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div>
@@ -197,7 +189,7 @@ export default function Home() {
       </section>
 
       {/* Featured Posts Section */}
-      <section id="featured-posts" className="py-32 bg-white dark:bg-zinc-950 relative z-10">
+      <section id="featured-posts" className="py-32 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 border-b border-zinc-200 dark:border-zinc-800 pb-8">
             <div>
@@ -265,7 +257,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-center relative z-10">
+      <footer className="py-12 border-t border-zinc-200 dark:border-zinc-800 text-center relative z-10">
         <div className="flex justify-center space-x-6 mb-6">
           <a href="#" className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Github className="w-6 h-6" /></a>
           <a href="#" className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Twitter className="w-6 h-6" /></a>
@@ -273,6 +265,7 @@ export default function Home() {
         </div>
         <p className="text-zinc-500 text-sm">© {new Date().getFullYear()} {settings.siteTitle}. All rights reserved.</p>
       </footer>
+      </div>
 
       {/* Post Modal */}
       {activePost && (

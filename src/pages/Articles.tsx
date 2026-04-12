@@ -298,6 +298,7 @@ export default function Articles() {
       <footer className="py-12 text-center text-zinc-500 dark:text-zinc-400 relative z-10">
         <p className="font-medium text-sm">© {new Date().getFullYear()} {settings.siteTitle}. All rights reserved.</p>
       </footer>
+      </div>
 
       {/* Post Modal */}
       {activePost && (
@@ -329,3 +330,4 @@ export default function Articles() {
     </div>
   )
 }
+

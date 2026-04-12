@@ -2,10 +2,15 @@ import express from 'express'
 import multer from 'multer'
 import { put } from '@vercel/blob'
 import { authenticate } from '../middleware/auth.js'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const _dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
 
 const router = express.Router()
 
-// 使用内存存储，因为 Vercel 的文件系统是只读的
+// 使用内存存储
 // 增加文件大小限制 10MB
 const upload = multer({ 
   storage: multer.memoryStorage(),
@@ -14,34 +19,40 @@ const upload = multer({
   }
 })
 
-// 导出为 ES Module 并在顶部声明为 Vercel Serverless Function 可能会有问题，但其实这是路由模块，不是入口点。
 router.post('/', authenticate, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' })
 
-    // 生成唯一的文件名，清理掉非英文字符防止 Vercel Blob 报错
     const originalName = Buffer.from(req.file.originalname, 'latin1').toString('utf8')
     const safeName = originalName.replace(/[^a-zA-Z0-9.-]/g, '_')
     const filename = `${Date.now()}-${safeName}`
 
-    // 检查是否有 token (在开发环境或未正确注入 Vercel 环境变量时)
     const token = process.env.BLOB_READ_WRITE_TOKEN
-    if (!token) {
-      console.error('Missing BLOB_READ_WRITE_TOKEN. Please check your Vercel project settings.')
-      return res.status(500).json({ error: 'Storage configuration error: Missing token' })
+    
+    if (token) {
+      // Vercel Blob 上传
+      const blob = await put(`uploads/${filename}`, req.file.buffer, {
+        access: 'public', 
+        token: token
+      })
+      return res.json({ url: blob.url })
+    } else {
+      // 本地回退上传
+      console.warn('BLOB_READ_WRITE_TOKEN is missing. Falling back to local file storage for development.')
+      
+      const uploadsDir = path.join(_dirname, '../../public/uploads')
+      
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true })
+      }
+      
+      const filePath = path.join(uploadsDir, filename)
+      fs.writeFileSync(filePath, req.file.buffer)
+      
+      return res.json({ url: `/uploads/${filename}` })
     }
-
-    // 上传到 Vercel Blob
-    // 网站的头像、壁纸、文章配图等必须是任何人都能公开访问查看的
-    // 所以必须强制要求使用 public 权限的 Vercel Blob
-    const blob = await put(`uploads/${filename}`, req.file.buffer, {
-      access: 'public', 
-      token: token // 显式传递 token
-    })
-
-    res.json({ url: blob.url })
   } catch (error) {
-    console.error('Vercel Blob upload error:', error)
+    console.error('Upload error:', error)
     res.status(500).json({ error: 'Upload failed', details: String(error) })
   }
 })
