@@ -185,9 +185,20 @@ export default function Articles() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-[var(--primary)] selection:text-white flex flex-col">
-      {/* Navigation */}
-      <nav className="sticky top-0 w-full z-40 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-[var(--primary)] selection:text-white">
+      {settings.heroBgUrl && (
+        <div 
+          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+          style={{ 
+            backgroundImage: `url(${settings.heroBgUrl})`,
+            opacity: settings.heroBgOpacity ?? 1
+          }}
+        />
+      )}
+      
+      <div className="relative z-10">
+        {/* Navigation */}
+        <nav className="sticky top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="text-zinc-500 hover:text-[var(--primary)] mr-4 transition-colors">
@@ -242,10 +253,12 @@ export default function Articles() {
                 className="group cursor-pointer bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-zinc-100 dark:border-zinc-800 hover:-translate-y-1 flex flex-col"
               >
                 <div className="aspect-[16/9] overflow-hidden bg-zinc-100 dark:bg-zinc-800 relative">
-                  {post.thumbnailUrl ? (
-                    <img src={post.thumbnailUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  {post.thumbnailUrl || post.imageUrl ? (
+                    <img src={post.thumbnailUrl || post.imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-300">暂无图片</div>
+                    <div className="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
+                      <FileText className="w-12 h-12 text-zinc-300 dark:text-zinc-700" />
+                    </div>
                   )}
                   {post.isFeatured && (
                     <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-md shadow-sm">
@@ -282,8 +295,8 @@ export default function Articles() {
       </div>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-center mt-auto">
-        <p className="text-zinc-500 text-sm">© {new Date().getFullYear()} {settings.siteTitle}. All rights reserved.</p>
+      <footer className="py-12 text-center text-zinc-500 dark:text-zinc-400">
+        <p className="font-medium text-sm">© {new Date().getFullYear()} {settings.siteTitle}. All rights reserved.</p>
       </footer>
 
       {/* Post Modal */}

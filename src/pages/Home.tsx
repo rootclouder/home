@@ -59,8 +59,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-[var(--primary)] selection:text-white">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
+      {settings.heroBgUrl && (
+        <div 
+          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+          style={{ 
+            backgroundImage: `url(${settings.heroBgUrl})`,
+            opacity: settings.heroBgOpacity ?? 1
+          }}
+        />
+      )}
+      
+      <div className="relative z-10">
+        {/* Navigation */}
+        <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="font-bold text-xl tracking-tight" style={{ color: 'var(--primary)' }}>
             {settings.siteTitle}
@@ -90,25 +101,26 @@ export default function Home() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-16 lg:gap-24">
           <div className="flex-1 text-center lg:text-left mt-8 lg:mt-0">
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-8 tracking-wide animate-fade-in-up" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
-              <span className="w-2 h-2 rounded-full mr-2 animate-pulse" style={{ backgroundColor: 'var(--primary)' }}></span>
-              AVAILABLE FOR NEW OPPORTUNITIES
-            </div>
+            {settings.badgeText && (
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-8 tracking-wide animate-fade-in-up" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
+                <span className="w-2 h-2 rounded-full mr-2 animate-pulse" style={{ backgroundColor: 'var(--primary)' }}></span>
+                {settings.badgeText}
+              </div>
+            )}
             
-            <h1 
-              className={`text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[1.1] ${settings.themeColor?.includes('gradient') ? 'text-primary-gradient' : ''}`}
-              style={settings.themeColor?.includes('gradient') ? {} : { color: 'var(--primary)' }}
-            >
-              <Typewriter
-                options={{
-                  strings: [settings.heroTitle],
-                  autoStart: true,
-                  loop: true,
-                  delay: 80,
-                  deleteSpeed: 50,
-                  cursorClassName: 'font-light text-zinc-300 dark:text-zinc-700 animate-pulse'
-                }}
-              />
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
+              <span className="block text-zinc-900 dark:text-white mb-2">{settings.heroTitle}</span>
+              <span className="block text-transparent bg-clip-text" style={settings.themeColor?.includes('gradient') ? { backgroundImage: settings.themeColor } : { backgroundColor: 'var(--primary)', backgroundImage: `linear-gradient(to right, var(--primary), var(--primary))` }}>
+                <Typewriter
+                  options={{
+                    strings: ['独立开发者', '全栈工程师', '开源爱好者'],
+                    autoStart: true,
+                    loop: true,
+                    wrapperClassName: 'pixel-font',
+                    cursorClassName: 'pixel-font text-[var(--primary)]'
+                  }}
+                />
+              </span>
             </h1>
             
             <p className="text-xl sm:text-2xl text-zinc-500 dark:text-zinc-400 mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light tracking-wide animate-fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'both' }}>

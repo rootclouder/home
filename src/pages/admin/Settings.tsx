@@ -6,6 +6,7 @@ export default function Settings() {
   const [settings, setSettings] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({})
 
   const gradientPresets = [
     { name: '暗夜黑', value: 'linear-gradient(to right, #0f172a, #000000)' },
@@ -43,16 +44,67 @@ export default function Settings() {
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     if (!e.target.files?.[0]) return
+    const file = e.target.files[0]
+    
+    // Check file size (client side)
+    if (file.size > 10 * 1024 * 1024) {
+      setMessage('图片不能超过10MB')
+      return
+    }
+
     const formData = new FormData()
-    formData.append('file', e.target.files[0])
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData
-    })
-    const data = await res.json()
-    if (data.url) {
-      setSettings({ ...settings, [field]: data.url })
+    formData.append('file', file)
+    
+    setUploadProgress(prev => ({ ...prev, [field]: 0 }))
+
+    try {
+      // Simulate progress since fetch doesn't support upload progress natively
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          const current = prev[field] || 0
+          if (current >= 90) {
+            clearInterval(progressInterval)
+            return prev
+          }
+          return { ...prev, [field]: current + 10 }
+        })
+      }, 200)
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      })
+      
+      clearInterval(progressInterval)
+      setUploadProgress(prev => ({ ...prev, [field]: 100 }))
+
+      if (!res.ok) {
+        throw new Error('Upload failed')
+      }
+
+      const data = await res.json()
+      if (data.url) {
+        setSettings({ ...settings, [field]: data.url })
+      }
+      
+      // Clear progress after a short delay
+      setTimeout(() => {
+        setUploadProgress(prev => {
+          const next = { ...prev }
+          delete next[field]
+          return next
+        })
+      }, 1000)
+
+    } catch (err) {
+      console.error('Upload error', err)
+      setMessage('上传失败')
+      setUploadProgress(prev => {
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
     }
   }
 
@@ -104,12 +156,23 @@ export default function Settings() {
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">主页 Hero 副标题</label>
             <input type="text" name="heroSubtitle" value={settings.heroSubtitle} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" />
           </div>
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">主页状态徽章 (如: AVAILABLE FOR NEW OPPORTUNITIES)</label>
+            <input type="text" name="badgeText" value={settings.badgeText || ''} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" placeholder="留空则不显示徽章" />
+          </div>
           
           <div>
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">头像上传</label>
             <div className="mt-1 flex items-center space-x-4">
               {settings.avatarUrl && <img src={settings.avatarUrl} alt="Avatar" className="h-12 w-12 rounded-full object-cover" />}
-              <input type="file" onChange={e => handleUpload(e, 'avatarUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
+              <div className="flex-1">
+                <input type="file" accept="image/*" onChange={e => handleUpload(e, 'avatarUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
+                {uploadProgress['avatarUrl'] !== undefined && (
+                  <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
+                    <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['avatarUrl']}%` }}></div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -117,8 +180,30 @@ export default function Settings() {
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Hero 壁纸上传 (图片/GIF)</label>
             <div className="mt-1 flex items-center space-x-4">
               {settings.heroBgUrl && <img src={settings.heroBgUrl} alt="Hero BG" className="h-12 w-24 rounded-xl object-cover" />}
-              <input type="file" onChange={e => handleUpload(e, 'heroBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
+              <div className="flex-1">
+                <input type="file" accept="image/*" onChange={e => handleUpload(e, 'heroBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
+                {uploadProgress['heroBgUrl'] !== undefined && (
+                  <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
+                    <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['heroBgUrl']}%` }}></div>
+                  </div>
+                )}
+              </div>
             </div>
+            {settings.heroBgUrl && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">背景透明度: {settings.heroBgOpacity ?? 1}</label>
+                <input 
+                  type="range" 
+                  name="heroBgOpacity" 
+                  min="0" 
+                  max="1" 
+                  step="0.05" 
+                  value={settings.heroBgOpacity ?? 1} 
+                  onChange={handleChange} 
+                  className="w-full"
+                />
+              </div>
+            )}
           </div>
         </div>
 

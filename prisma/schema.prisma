@@ -18,8 +18,10 @@ model Setting {
   siteTitle    String   @default("My Portfolio")
   heroTitle    String   @default("Hello, I'm a Creator")
   heroSubtitle String   @default("Welcome to my personal space")
+  badgeText    String   @default("AVAILABLE FOR NEW OPPORTUNITIES")
   avatarUrl    String?
   heroBgUrl    String?
+  heroBgOpacity Float   @default(1.0)
   themeColor   String   @default("#000000")
   updatedAt    DateTime @updatedAt
 }
@@ -29,6 +31,7 @@ model Project {
   title       String
   description String?
   coverUrl    String?
+  thumbnailUrl String? // Used for the frontend display
   projectUrl  String
   sortOrder   Int      @default(0)
   isVisible   Boolean  @default(true)

@@ -5,6 +5,7 @@ export default function Projects() {
   const { token } = useStore()
   const [projects, setProjects] = useState<any[]>([])
   const [editing, setEditing] = useState<any>(null)
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({})
   
   const fetchProjects = () => fetch('/api/projects').then(r => r.json()).then(setProjects)
   
@@ -30,6 +31,66 @@ export default function Projects() {
     fetchProjects()
   }
 
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    if (!e.target.files?.[0]) return
+    const file = e.target.files[0]
+    
+    if (file.size > 10 * 1024 * 1024) {
+      alert('图片不能超过10MB')
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    setUploadProgress(prev => ({ ...prev, [field]: 0 }))
+
+    try {
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          const current = prev[field] || 0
+          if (current >= 90) {
+            clearInterval(progressInterval)
+            return prev
+          }
+          return { ...prev, [field]: current + 10 }
+        })
+      }, 200)
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      })
+      
+      clearInterval(progressInterval)
+      setUploadProgress(prev => ({ ...prev, [field]: 100 }))
+
+      if (!res.ok) throw new Error('Upload failed')
+
+      const data = await res.json()
+      if (data.url) {
+        setEditing({ ...editing, [field]: data.url })
+      }
+      
+      setTimeout(() => {
+        setUploadProgress(prev => {
+          const next = { ...prev }
+          delete next[field]
+          return next
+        })
+      }, 1000)
+    } catch (err) {
+      console.error('Upload error', err)
+      alert('上传失败')
+      setUploadProgress(prev => {
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -42,7 +103,7 @@ export default function Projects() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map(p => (
           <div key={p.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm flex flex-col">
-            {p.coverUrl ? <img src={p.coverUrl} className="h-40 w-full object-cover" /> : <div className="h-40 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">无封面</div>}
+            {p.thumbnailUrl || p.coverUrl ? <img src={p.thumbnailUrl || p.coverUrl} className="h-40 w-full object-cover" /> : <div className="h-40 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">无图片</div>}
             <div className="p-5 flex-1 flex flex-col">
               <h3 className="font-semibold text-lg text-zinc-900 dark:text-white mb-1">{p.title}</h3>
               <p className="text-zinc-500 dark:text-zinc-400 text-sm line-clamp-2 mb-4 flex-1">{p.description}</p>
@@ -72,6 +133,38 @@ export default function Projects() {
               <div>
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">链接地址</label>
                 <input required type="url" value={editing.projectUrl} onChange={e => setEditing({...editing, projectUrl: e.target.value})} className="mt-1 block w-full rounded-2xl border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 p-2.5 outline-none focus:ring-2 focus:ring-zinc-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">封面大图</label>
+                <div className="flex items-center space-x-4">
+                  <div className="h-16 w-24 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700 flex-shrink-0">
+                    {editing.coverUrl ? <img src={editing.coverUrl} className="h-full w-full object-cover" /> : <span className="h-full w-full flex items-center justify-center text-zinc-400 text-xs">无</span>}
+                  </div>
+                  <div className="flex-1">
+                    <input type="file" accept="image/*" onChange={e => handleUpload(e, 'coverUrl')} className="block w-full text-sm text-zinc-500 dark:text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-50 file:text-zinc-700 hover:file:bg-zinc-100 dark:file:bg-zinc-800 dark:file:text-zinc-300 dark:hover:file:bg-zinc-700 transition-colors" />
+                    {uploadProgress['coverUrl'] !== undefined && (
+                      <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
+                        <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['coverUrl']}%` }}></div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">缩略图 (用于列表展示)</label>
+                <div className="flex items-center space-x-4">
+                  <div className="h-16 w-16 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700 flex-shrink-0">
+                    {editing.thumbnailUrl ? <img src={editing.thumbnailUrl} className="h-full w-full object-cover" /> : <span className="h-full w-full flex items-center justify-center text-zinc-400 text-xs">无</span>}
+                  </div>
+                  <div className="flex-1">
+                    <input type="file" accept="image/*" onChange={e => handleUpload(e, 'thumbnailUrl')} className="block w-full text-sm text-zinc-500 dark:text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-50 file:text-zinc-700 hover:file:bg-zinc-100 dark:file:bg-zinc-800 dark:file:text-zinc-300 dark:hover:file:bg-zinc-700 transition-colors" />
+                    {uploadProgress['thumbnailUrl'] !== undefined && (
+                      <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
+                        <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['thumbnailUrl']}%` }}></div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
             <div className="mt-8 flex justify-end space-x-3">
