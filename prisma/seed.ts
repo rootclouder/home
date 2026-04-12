@@ -4,14 +4,26 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  // Create admin user
-  const hashedPassword = await bcrypt.hash('admin123', 10)
+  // Delete old admin user if it exists to ensure security
+  try {
+    await prisma.user.delete({
+      where: { username: 'admin' }
+    })
+    console.log('Old admin user deleted.')
+  } catch (e) {
+    // User might not exist, ignore
+  }
+
+  // Create new admin user
+  const hashedPassword = await bcrypt.hash('chenrunying@ABC123', 10)
   
   const user = await prisma.user.upsert({
-    where: { username: 'admin' },
-    update: {},
+    where: { username: 'chenrunying' },
+    update: {
+      password: hashedPassword,
+    },
     create: {
-      username: 'admin',
+      username: 'chenrunying',
       password: hashedPassword,
     },
   })
