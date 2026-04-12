@@ -229,7 +229,7 @@ export default function Articles() {
       </nav>
 
       {/* Main Content */}
-      <div className="flex-1 max-w-6xl mx-auto px-6 py-12 w-full flex flex-col md:flex-row gap-12">
+      <div className="flex-1 max-w-6xl mx-auto px-6 py-12 w-full flex flex-col md:flex-row gap-12 relative z-10">
         {/* Sidebar Categories */}
         <aside className="w-full md:w-64 shrink-0">
           <div className="sticky top-24">
@@ -245,44 +245,7 @@ export default function Articles() {
 
         {/* Posts Grid */}
         <main className="flex-1">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {filteredPosts.map((post) => (
-              <div 
-                key={post.id} 
-                onClick={() => setActivePost(post)}
-                className="group cursor-pointer bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-zinc-100 dark:border-zinc-800 hover:-translate-y-1 flex flex-col"
-              >
-                <div className="aspect-[16/9] overflow-hidden bg-zinc-100 dark:bg-zinc-800 relative">
-                  {post.thumbnailUrl || post.imageUrl ? (
-                    <img src={post.thumbnailUrl || post.imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
-                      <FileText className="w-12 h-12 text-zinc-300 dark:text-zinc-700" />
-                    </div>
-                  )}
-                  {post.isFeatured && (
-                    <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-md shadow-sm">
-                      精选
-                    </div>
-                  )}
-                </div>
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex items-center text-xs font-semibold tracking-wider uppercase mb-2 text-zinc-500">
-                    <span className="text-[var(--primary)]">{post.category?.name}</span>
-                    <span className="mx-2">•</span>
-                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-3 group-hover:text-[var(--primary)] transition-colors line-clamp-2">{post.title}</h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-sm line-clamp-3 mb-4">{post.summary || '暂无概要'}</p>
-                  <div className="mt-auto flex items-center text-[var(--primary)] font-medium text-sm">
-                    阅读全文 <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {filteredPosts.length === 0 && (
+          {filteredPosts.length === 0 ? (
             <div className="text-center py-20 bg-white dark:bg-zinc-900 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800">
               <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-400">
                 <FileText className="w-8 h-8" />
@@ -290,12 +253,49 @@ export default function Articles() {
               <h3 className="text-lg font-medium text-zinc-900 dark:text-white mb-2">该栏目下暂无文章</h3>
               <p className="text-zinc-500 dark:text-zinc-400">请尝试选择其他分类或稍后再来看看</p>
             </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {filteredPosts.map((post) => (
+                <div 
+                  key={post.id} 
+                  onClick={() => setActivePost(post)}
+                  className="group cursor-pointer bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-zinc-100 dark:border-zinc-800 hover:-translate-y-1 flex flex-col"
+                >
+                  <div className="aspect-[16/9] overflow-hidden bg-zinc-100 dark:bg-zinc-800 relative">
+                    {post.thumbnailUrl || post.imageUrl ? (
+                      <img src={post.thumbnailUrl || post.imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
+                        <FileText className="w-12 h-12 text-zinc-300 dark:text-zinc-700" />
+                      </div>
+                    )}
+                    {post.isFeatured && (
+                      <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-md shadow-sm">
+                        精选
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="flex items-center text-xs font-semibold tracking-wider uppercase mb-2 text-zinc-500">
+                      <span className="text-[var(--primary)]">{post.category?.name}</span>
+                      <span className="mx-2">•</span>
+                      <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-3 group-hover:text-[var(--primary)] transition-colors line-clamp-2">{post.title}</h3>
+                    <p className="text-zinc-500 dark:text-zinc-400 text-sm line-clamp-3 mb-4">{post.summary || '暂无概要'}</p>
+                    <div className="mt-auto flex items-center text-[var(--primary)] font-medium text-sm">
+                      阅读全文 <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </main>
       </div>
 
       {/* Footer */}
-      <footer className="py-12 text-center text-zinc-500 dark:text-zinc-400">
+      <footer className="py-12 text-center text-zinc-500 dark:text-zinc-400 relative z-10">
         <p className="font-medium text-sm">© {new Date().getFullYear()} {settings.siteTitle}. All rights reserved.</p>
       </footer>
 
