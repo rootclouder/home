@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Github, Twitter, Mail, ArrowRight, X } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
 import Typewriter from 'typewriter-effect'
+import FloatingRobot from '../components/FloatingRobot'
 
 export default function Home() {
   const [settings, setSettings] = useState<any>(null)
@@ -82,7 +83,6 @@ export default function Home() {
             {categories.filter(c => !c.parentId).map(c => (
               <a key={c.id} href={`/articles?categoryId=${c.id}`} className="hover:text-[var(--primary)] transition-colors">{c.name}</a>
             ))}
-            <a href="/admin" className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full hover:scale-105 transition-transform">后台管理</a>
           </div>
         </div>
       </nav>
@@ -298,6 +298,9 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Floating Robot for Admin Navigation */}
+      <FloatingRobot />
     </div>
   )
 }

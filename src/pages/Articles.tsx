@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Github, Twitter, Mail, ArrowRight, ArrowLeft, X, FileText } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
+import FloatingRobot from '../components/FloatingRobot'
 
 export default function Articles() {
   const [settings, setSettings] = useState<any>(null)
@@ -223,7 +224,6 @@ export default function Articles() {
                 {c.name}
               </button>
             ))}
-            <Link to="/admin" className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full hover:scale-105 transition-transform">后台管理</Link>
           </div>
         </div>
       </nav>
@@ -327,6 +327,9 @@ export default function Articles() {
           </div>
         </div>
       )}
+
+      {/* Floating Robot for Admin Navigation */}
+      <FloatingRobot />
     </div>
   )
 }
