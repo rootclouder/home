@@ -148,7 +148,7 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-32 bg-zinc-50 dark:bg-zinc-900/30">
+      <section id="projects" className="py-32 bg-zinc-50 dark:bg-zinc-900/30 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div>
@@ -197,7 +197,7 @@ export default function Home() {
       </section>
 
       {/* Featured Posts Section */}
-      <section id="featured-posts" className="py-32 bg-white dark:bg-zinc-950">
+      <section id="featured-posts" className="py-32 bg-white dark:bg-zinc-950 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 border-b border-zinc-200 dark:border-zinc-800 pb-8">
             <div>
@@ -229,11 +229,13 @@ export default function Home() {
                     <div className="w-full h-full flex items-center justify-center text-zinc-300">暂无图片</div>
                   )}
                   
-                  <div className="absolute top-4 left-4">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md text-xs font-bold tracking-wider uppercase text-zinc-900 dark:text-white shadow-sm">
-                      {post.category?.name}
-                    </span>
-                  </div>
+                  {post.category?.name && (
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md text-xs font-bold tracking-wider uppercase text-zinc-900 dark:text-white shadow-sm">
+                        {post.category.name}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex flex-col flex-1">
@@ -263,7 +265,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-center">
+      <footer className="py-12 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-center relative z-10">
         <div className="flex justify-center space-x-6 mb-6">
           <a href="#" className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Github className="w-6 h-6" /></a>
           <a href="#" className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Twitter className="w-6 h-6" /></a>
