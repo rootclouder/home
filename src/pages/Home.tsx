@@ -215,14 +215,6 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative w-full max-w-md mx-auto mb-10">
-              <div className="absolute -inset-4 rounded-3xl bg-[var(--primary)]/10 blur-2xl opacity-50 pointer-events-none" />
-              <div className="relative rounded-3xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md px-5 py-4 text-center">
-                <div className="text-xs uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">Status</div>
-                <div className="mt-2 text-sm font-medium text-zinc-800 dark:text-zinc-100">Always learning, always shipping</div>
-              </div>
-            </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {skillMatrixItems.filter(s => s.isVisible).map((item) => (
                 <div
@@ -395,11 +387,6 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-12 border-t border-zinc-200 dark:border-zinc-800 text-center relative z-10">
-        <div className="flex justify-center space-x-6 mb-6">
-          <a href="#" className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Github className="w-6 h-6" /></a>
-          <a href="#" className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Twitter className="w-6 h-6" /></a>
-          <a href="#" className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Mail className="w-6 h-6" /></a>
-        </div>
         <p className="text-zinc-500 text-sm">© {new Date().getFullYear()} {settings.siteTitle}. All rights reserved.</p>
       </footer>
       </div>
