@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
+import ProjectsPage from './pages/Projects'
 import Articles from './pages/Articles'
 import AdminLayout from './components/AdminLayout'
 import Login from './pages/admin/Login'
@@ -15,12 +16,13 @@ import SkillMatrix from './pages/admin/SkillMatrix'
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public Home Page */}
-        <Route path="/" element={<Home />} />
-        <Route path="/articles" element={<Articles />} />
-
-        {/* Admin Login */}
+        <Routes>
+          {/* Public Home Page */}
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/articles" element={<Articles />} />
+        
+        {/* Admin Routes */}
         <Route path="/admin/login" element={<Login />} />
 
         {/* Admin Dashboard */}

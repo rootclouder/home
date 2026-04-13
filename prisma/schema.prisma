@@ -23,6 +23,10 @@ model Setting {
   avatarUrl    String?
   heroBgUrl    String?
   heroBgOpacity Float   @default(1.0)
+  projectsBgUrl String?
+  projectsBgOpacity Float @default(1.0)
+  blogBgUrl    String?
+  blogBgOpacity Float   @default(1.0)
   themeColor   String   @default("#000000")
   updatedAt    DateTime @updatedAt
 }

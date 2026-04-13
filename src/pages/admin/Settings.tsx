@@ -3,10 +3,11 @@ import { useStore } from '../../store'
 
 export default function Settings() {
   const { token } = useStore()
+
   const [settings, setSettings] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({})
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
 
   const gradientPresets = [
     { name: '暗夜黑', value: 'linear-gradient(to right, #0f172a, #000000)' },
@@ -31,7 +32,9 @@ export default function Settings() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           ...settings,
-          heroBgOpacity: typeof settings.heroBgOpacity === 'string' ? parseFloat(settings.heroBgOpacity) : settings.heroBgOpacity
+          heroBgOpacity: typeof settings.heroBgOpacity === 'string' ? parseFloat(settings.heroBgOpacity) : settings.heroBgOpacity,
+          projectsBgOpacity: typeof settings.projectsBgOpacity === 'string' ? parseFloat(settings.projectsBgOpacity) : settings.projectsBgOpacity,
+          blogBgOpacity: typeof settings.blogBgOpacity === 'string' ? parseFloat(settings.blogBgOpacity) : settings.blogBgOpacity
         })
       })
       if (!res.ok) throw new Error('Save failed')
@@ -208,6 +211,65 @@ export default function Settings() {
                   max="1" 
                   step="0.05" 
                   value={settings.heroBgOpacity ?? 1} 
+                  onChange={handleChange} 
+                  className="w-full"
+                />
+              </div>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">作品集壁纸上传</label>
+            <div className="mt-1 flex items-center space-x-4">
+              {settings.projectsBgUrl && <img src={settings.projectsBgUrl} alt="Projects BG" className="h-12 w-24 rounded-xl object-cover" />}
+              <div className="flex-1">
+                <input type="file" accept="image/*" onChange={e => handleUpload(e, 'projectsBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
+                {uploadProgress['projectsBgUrl'] !== undefined && (
+                  <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
+                    <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['projectsBgUrl']}%` }}></div>
+                  </div>
+                )}
+              </div>
+            </div>
+            {settings.projectsBgUrl && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">背景透明度: {settings.projectsBgOpacity ?? 1}</label>
+                <input 
+                  type="range" 
+                  name="projectsBgOpacity" 
+                  min="0" 
+                  max="1" 
+                  step="0.05" 
+                  value={settings.projectsBgOpacity ?? 1} 
+                  onChange={handleChange} 
+                  className="w-full"
+                />
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">博客壁纸上传</label>
+            <div className="mt-1 flex items-center space-x-4">
+              {settings.blogBgUrl && <img src={settings.blogBgUrl} alt="Blog BG" className="h-12 w-24 rounded-xl object-cover" />}
+              <div className="flex-1">
+                <input type="file" accept="image/*" onChange={e => handleUpload(e, 'blogBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
+                {uploadProgress['blogBgUrl'] !== undefined && (
+                  <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
+                    <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['blogBgUrl']}%` }}></div>
+                  </div>
+                )}
+              </div>
+            </div>
+            {settings.blogBgUrl && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">背景透明度: {settings.blogBgOpacity ?? 1}</label>
+                <input 
+                  type="range" 
+                  name="blogBgOpacity" 
+                  min="0" 
+                  max="1" 
+                  step="0.05" 
+                  value={settings.blogBgOpacity ?? 1} 
                   onChange={handleChange} 
                   className="w-full"
                 />
