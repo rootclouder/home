@@ -21,25 +21,25 @@ export default function AdminLayout() {
       title: '首页',
       items: [
         { name: '基础设置', path: '/admin/settings', icon: Settings },
+        { name: '页面设置', path: '/admin/settings?tab=home-page', icon: ImageIcon },
         { name: '技能矩阵', path: '/admin/skill-matrix', icon: LayoutGrid },
         { name: '工作经历', path: '/admin/work-experiences', icon: Briefcase },
         { name: '项目经历', path: '/admin/project-experiences', icon: FolderKanban },
-        { name: '首页壁纸', path: '/admin/settings?tab=home-bg', icon: ImageIcon },
       ]
     },
     {
       title: '作品集',
       items: [
+        { name: '页面设置', path: '/admin/settings?tab=portfolio-page', icon: ImageIcon },
         { name: '作品管理', path: '/admin/projects', icon: FolderKanban },
-        { name: '壁纸设置', path: '/admin/settings?tab=portfolio-bg', icon: ImageIcon },
       ]
     },
     {
       title: '博客',
       items: [
+        { name: '页面设置', path: '/admin/settings?tab=blog-page', icon: ImageIcon },
         { name: '栏目管理', path: '/admin/categories', icon: ListTree },
         { name: '内容发布', path: '/admin/posts', icon: FileText },
-        { name: '壁纸设置', path: '/admin/settings?tab=blog-bg', icon: ImageIcon },
       ]
     }
   ]

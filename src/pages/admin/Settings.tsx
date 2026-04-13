@@ -48,7 +48,7 @@ export default function Settings() {
     setLoading(false)
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setSettings({ ...settings, [e.target.name]: e.target.value })
   }
 
@@ -121,195 +121,290 @@ export default function Settings() {
   if (!settings) return <div>Loading...</div>
 
   const titles: Record<string, string> = {
-    'basic': '基础设置',
-    'home-bg': '首页壁纸设置',
-    'portfolio-bg': '作品集壁纸设置',
-    'blog-bg': '博客壁纸设置'
+    'basic': '基础全局设置',
+    'home-page': '首页展示配置',
+    'portfolio-page': '作品集页面配置',
+    'blog-page': '博客页面配置'
   }
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">{titles[tab] || '设置'}</h1>
-      <form onSubmit={handleSave} className="bg-white dark:bg-zinc-900 shadow-sm rounded-2xl p-8 border border-zinc-100 dark:border-zinc-800 space-y-6">
-        {message && <div className="text-green-600 bg-green-50 p-3 rounded-lg text-sm">{message}</div>}
-        
-        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-          {tab === 'basic' && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">站点标题</label>
-                <input type="text" name="siteTitle" value={settings.siteTitle} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">主题色 (渐变预设)</label>
-                <div className="grid grid-cols-3 gap-3">
-                  {gradientPresets.map((preset) => (
-                    <button
-                      key={preset.name}
-                      type="button"
-                      onClick={() => setSettings({ ...settings, themeColor: preset.value })}
-                      className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all ${
-                        settings.themeColor === preset.value 
-                          ? 'border-zinc-900 dark:border-white shadow-md scale-105' 
-                          : 'border-transparent bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                      }`}
-                    >
-                      <div 
-                        className="w-full h-8 rounded-xl mb-2 shadow-sm" 
-                        style={{ background: preset.value }}
-                      />
-                      <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{preset.name}</span>
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-4">
-                  <label className="block text-xs text-zinc-500 mb-1">自定义 CSS 渐变值</label>
-                  <input type="text" name="themeColor" value={settings.themeColor} onChange={handleChange} className="block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow text-sm" placeholder="例如: linear-gradient(to right, #000, #fff)" />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">主页 Hero 标题 (多段文字请用英文逗号 , 分隔以实现打字机效果)</label>
-                <input type="text" name="heroTitle" value={settings.heroTitle} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" placeholder="例如: 独立开发者, 全栈工程师, 开源爱好者" />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">主页 Hero 副标题</label>
-                <input type="text" name="heroSubtitle" value={settings.heroSubtitle} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">作品集副标题 (多段文字请用英文逗号 , 分隔以实现打字机效果)</label>
-                <input type="text" name="projectsSubtitle" value={settings.projectsSubtitle || ''} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" placeholder="例如: 这里展示了我近期参与开发或主导的核心项目" />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">博客副标题 (多段文字请用英文逗号 , 分隔以实现打字机效果)</label>
-                <input type="text" name="blogSubtitle" value={settings.blogSubtitle || ''} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" placeholder="例如: AIGC 实践心得、开发经验、技术探索笔记" />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">主页状态徽章 (如: AVAILABLE FOR NEW OPPORTUNITIES)</label>
-                <input type="text" name="badgeText" value={settings.badgeText || ''} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" placeholder="留空则不显示徽章" />
-              </div>
+      <form onSubmit={handleSave} className="bg-white dark:bg-zinc-900 shadow-sm rounded-3xl p-8 md:p-10 border border-zinc-100 dark:border-zinc-800/60 space-y-10">
+        {message && (
+          <div className="text-emerald-600 bg-emerald-50/50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-2xl text-sm font-medium flex items-center">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 mr-3"></span>
+            {message}
+          </div>
+        )}
 
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">技能矩阵标题</label>
-                <input type="text" name="skillsMatrixTitle" value={settings.skillsMatrixTitle || ''} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" placeholder="例如: 技能矩阵 / Skill Matrix" />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">头像上传</label>
-                <div className="mt-1 flex items-center space-x-4">
-                  {settings.avatarUrl && <img src={settings.avatarUrl} alt="Avatar" className="h-12 w-12 rounded-full object-cover" />}
-                  <div className="flex-1">
-                    <input type="file" accept="image/*" onChange={e => handleUpload(e, 'avatarUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
-                    {uploadProgress['avatarUrl'] !== undefined && (
-                      <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
-                        <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['avatarUrl']}%` }}></div>
+        <div className="space-y-12">
+          {tab === 'basic' && (
+            <div className="space-y-8">
+              <section>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-6 flex items-center">
+                  <span className="w-1.5 h-5 bg-[var(--primary)] rounded-full mr-3 opacity-80"></span>
+                  核心标识
+                </h3>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">站点标题</label>
+                    <input type="text" name="siteTitle" value={settings.siteTitle} onChange={handleChange} className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 shadow-sm focus:border-[var(--primary)] focus:ring-[var(--primary)] p-3 border outline-none transition-all" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">头像上传</label>
+                    <div className="flex items-center space-x-6">
+                      {settings.avatarUrl ? (
+                        <div className="relative group">
+                          <img src={settings.avatarUrl} alt="Avatar" className="h-20 w-20 rounded-full object-cover ring-4 ring-white dark:ring-zinc-800 shadow-lg" />
+                        </div>
+                      ) : (
+                        <div className="h-20 w-20 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 ring-4 ring-white dark:ring-zinc-900 shadow-sm">
+                          无
+                        </div>
+                      )}
+                      <div className="flex-1 max-w-md">
+                        <input type="file" accept="image/*" onChange={e => handleUpload(e, 'avatarUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                        {uploadProgress['avatarUrl'] !== undefined && (
+                          <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                            <div className="bg-[var(--primary)] h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['avatarUrl']}%` }}></div>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </>
-          )}
+              </section>
 
-          {tab === 'home-bg' && (
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Hero 壁纸上传 (图片/GIF)</label>
-              <div className="mt-1 flex items-center space-x-4">
-                {settings.heroBgUrl && <img src={settings.heroBgUrl} alt="Hero BG" className="h-12 w-24 rounded-xl object-cover" />}
-                <div className="flex-1">
-                  <input type="file" accept="image/*" onChange={e => handleUpload(e, 'heroBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
-                  {uploadProgress['heroBgUrl'] !== undefined && (
-                    <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
-                      <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['heroBgUrl']}%` }}></div>
-                    </div>
-                  )}
+              <section>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-6 flex items-center">
+                  <span className="w-1.5 h-5 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-3 opacity-80"></span>
+                  品牌色彩
+                </h3>
+                <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">主题色 (预设渐变)</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                    {gradientPresets.map((preset) => (
+                      <button
+                        key={preset.name}
+                        type="button"
+                        onClick={() => setSettings({ ...settings, themeColor: preset.value })}
+                        className={`group flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all duration-300 ${
+                          settings.themeColor === preset.value
+                            ? 'border-[var(--primary)] bg-white dark:bg-zinc-900 shadow-md scale-[1.02]'
+                            : 'border-transparent bg-zinc-100/50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:scale-[1.02]'
+                        }`}
+                      >
+                        <div
+                          className="w-full h-10 rounded-xl mb-3 shadow-sm transform group-hover:scale-105 transition-transform"
+                          style={{ background: preset.value }}
+                        />
+                        <span className={`text-xs font-semibold ${settings.themeColor === preset.value ? 'text-[var(--primary)]' : 'text-zinc-500 dark:text-zinc-400'}`}>{preset.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-zinc-200/50 dark:border-zinc-700/50">
+                    <label className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2">自定义 CSS 渐变值</label>
+                    <input type="text" name="themeColor" value={settings.themeColor} onChange={handleChange} className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 shadow-sm focus:border-[var(--primary)] focus:ring-[var(--primary)] p-3 border outline-none transition-all text-sm font-mono" placeholder="例如: linear-gradient(to right, #000, #fff)" />
+                  </div>
                 </div>
-              </div>
-              {settings.heroBgUrl && (
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">背景透明度: {settings.heroBgOpacity ?? 1}</label>
-                  <input 
-                    type="range" 
-                    name="heroBgOpacity" 
-                    min="0" 
-                    max="1" 
-                    step="0.05" 
-                    value={settings.heroBgOpacity ?? 1} 
-                    onChange={handleChange} 
-                    className="w-full"
-                  />
-                </div>
-              )}
+              </section>
             </div>
           )}
 
-          {tab === 'portfolio-bg' && (
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">作品集壁纸上传</label>
-              <div className="mt-1 flex items-center space-x-4">
-                {settings.projectsBgUrl && <img src={settings.projectsBgUrl} alt="Projects BG" className="h-12 w-24 rounded-xl object-cover" />}
-                <div className="flex-1">
-                  <input type="file" accept="image/*" onChange={e => handleUpload(e, 'projectsBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
-                  {uploadProgress['projectsBgUrl'] !== undefined && (
-                    <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
-                      <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['projectsBgUrl']}%` }}></div>
+          {tab === 'home-page' && (
+            <div className="space-y-8">
+              <section>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-6 flex items-center">
+                  <span className="w-1.5 h-5 bg-blue-500 rounded-full mr-3 opacity-80"></span>
+                  首页文案
+                </h3>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                      Hero 标题 <span className="text-zinc-400 font-normal ml-1">(多段用英文逗号 , 分隔以实现打字机效果)</span>
+                    </label>
+                    <textarea name="heroTitle" rows={2} value={settings.heroTitle} onChange={handleChange} className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 shadow-sm focus:border-[var(--primary)] focus:ring-[var(--primary)] p-4 border outline-none transition-all resize-none text-sm leading-relaxed" placeholder="例如: 独立开发者, 全栈工程师, 开源爱好者" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Hero 副标题</label>
+                    <input type="text" name="heroSubtitle" value={settings.heroSubtitle} onChange={handleChange} className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 shadow-sm focus:border-[var(--primary)] focus:ring-[var(--primary)] p-3 border outline-none transition-all" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">状态徽章文本</label>
+                    <input type="text" name="badgeText" value={settings.badgeText || ''} onChange={handleChange} className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 shadow-sm focus:border-[var(--primary)] focus:ring-[var(--primary)] p-3 border outline-none transition-all text-sm" placeholder="如: AVAILABLE FOR NEW OPPORTUNITIES" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">技能矩阵模块标题</label>
+                    <input type="text" name="skillsMatrixTitle" value={settings.skillsMatrixTitle || ''} onChange={handleChange} className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 shadow-sm focus:border-[var(--primary)] focus:ring-[var(--primary)] p-3 border outline-none transition-all text-sm" placeholder="例如: 技能矩阵 / Skill Matrix" />
+                  </div>
+                </div>
+              </section>
+
+              <section>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-6 flex items-center">
+                  <span className="w-1.5 h-5 bg-indigo-500 rounded-full mr-3 opacity-80"></span>
+                  视觉氛围
+                </h3>
+                <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">Hero 背景壁纸 (图片或动态 GIF)</label>
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    {settings.heroBgUrl ? (
+                      <img src={settings.heroBgUrl} alt="Hero BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                    ) : (
+                      <div className="h-24 w-40 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 text-sm border border-dashed border-zinc-300 dark:border-zinc-700">无背景</div>
+                    )}
+                    <div className="flex-1 max-w-md">
+                      <input type="file" accept="image/*" onChange={e => handleUpload(e, 'heroBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                      {uploadProgress['heroBgUrl'] !== undefined && (
+                        <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                          <div className="bg-blue-500 h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['heroBgUrl']}%` }}></div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {settings.heroBgUrl && (
+                    <div className="mt-8 pt-6 border-t border-zinc-200/50 dark:border-zinc-700/50">
+                      <div className="flex justify-between mb-2">
+                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">背景透明度 / 不透明度</label>
+                        <span className="text-sm font-mono text-[var(--primary)]">{settings.heroBgOpacity ?? 1}</span>
+                      </div>
+                      <input type="range" name="heroBgOpacity" min="0" max="1" step="0.05" value={settings.heroBgOpacity ?? 1} onChange={handleChange} className="w-full accent-[var(--primary)]" />
                     </div>
                   )}
                 </div>
-              </div>
-              {settings.projectsBgUrl && (
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">背景透明度: {settings.projectsBgOpacity ?? 1}</label>
-                  <input 
-                    type="range" 
-                    name="projectsBgOpacity" 
-                    min="0" 
-                    max="1" 
-                    step="0.05" 
-                    value={settings.projectsBgOpacity ?? 1} 
-                    onChange={handleChange} 
-                    className="w-full"
-                  />
-                </div>
-              )}
+              </section>
             </div>
           )}
 
-          {tab === 'blog-bg' && (
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">博客壁纸上传</label>
-              <div className="mt-1 flex items-center space-x-4">
-                {settings.blogBgUrl && <img src={settings.blogBgUrl} alt="Blog BG" className="h-12 w-24 rounded-xl object-cover" />}
-                <div className="flex-1">
-                  <input type="file" accept="image/*" onChange={e => handleUpload(e, 'blogBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-2xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 transition-colors" />
-                  {uploadProgress['blogBgUrl'] !== undefined && (
-                    <div className="mt-2 w-full bg-zinc-200 rounded-full h-1.5 dark:bg-zinc-700">
-                      <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${uploadProgress['blogBgUrl']}%` }}></div>
+          {tab === 'portfolio-page' && (
+            <div className="space-y-8">
+              <section>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-6 flex items-center">
+                  <span className="w-1.5 h-5 bg-emerald-500 rounded-full mr-3 opacity-80"></span>
+                  副标题配置
+                </h3>
+                <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                    打字机特效文案 <span className="text-zinc-400 font-normal ml-1">(多段文字请用英文逗号 , 分隔)</span>
+                  </label>
+                  <textarea
+                    name="projectsSubtitle"
+                    rows={4}
+                    value={settings.projectsSubtitle || ''}
+                    onChange={handleChange}
+                    className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 shadow-sm focus:border-[var(--primary)] focus:ring-[var(--primary)] p-4 border outline-none transition-all text-sm leading-relaxed resize-none"
+                    placeholder="例如: 这里展示了我近期参与开发或主导的核心项目, 涵盖前端交互、全栈开发与用户体验设计"
+                  />
+                  <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 flex items-center">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600 mr-2"></span>
+                    前台将以像素风 (Pixel Font) 逐字打印展示，增加复古极客氛围。
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-6 flex items-center">
+                  <span className="w-1.5 h-5 bg-teal-500 rounded-full mr-3 opacity-80"></span>
+                  视觉氛围
+                </h3>
+                <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">作品集背景壁纸</label>
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    {settings.projectsBgUrl ? (
+                      <img src={settings.projectsBgUrl} alt="Projects BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                    ) : (
+                      <div className="h-24 w-40 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 text-sm border border-dashed border-zinc-300 dark:border-zinc-700">无背景</div>
+                    )}
+                    <div className="flex-1 max-w-md">
+                      <input type="file" accept="image/*" onChange={e => handleUpload(e, 'projectsBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                      {uploadProgress['projectsBgUrl'] !== undefined && (
+                        <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                          <div className="bg-emerald-500 h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['projectsBgUrl']}%` }}></div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {settings.projectsBgUrl && (
+                    <div className="mt-8 pt-6 border-t border-zinc-200/50 dark:border-zinc-700/50">
+                      <div className="flex justify-between mb-2">
+                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">背景透明度 / 不透明度</label>
+                        <span className="text-sm font-mono text-[var(--primary)]">{settings.projectsBgOpacity ?? 1}</span>
+                      </div>
+                      <input type="range" name="projectsBgOpacity" min="0" max="1" step="0.05" value={settings.projectsBgOpacity ?? 1} onChange={handleChange} className="w-full accent-[var(--primary)]" />
                     </div>
                   )}
                 </div>
-              </div>
-              {settings.blogBgUrl && (
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">背景透明度: {settings.blogBgOpacity ?? 1}</label>
-                  <input 
-                    type="range" 
-                    name="blogBgOpacity" 
-                    min="0" 
-                    max="1" 
-                    step="0.05" 
-                    value={settings.blogBgOpacity ?? 1} 
-                    onChange={handleChange} 
-                    className="w-full"
+              </section>
+            </div>
+          )}
+
+          {tab === 'blog-page' && (
+            <div className="space-y-8">
+              <section>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-6 flex items-center">
+                  <span className="w-1.5 h-5 bg-orange-500 rounded-full mr-3 opacity-80"></span>
+                  副标题配置
+                </h3>
+                <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                    打字机特效文案 <span className="text-zinc-400 font-normal ml-1">(多段文字请用英文逗号 , 分隔)</span>
+                  </label>
+                  <textarea
+                    name="blogSubtitle"
+                    rows={4}
+                    value={settings.blogSubtitle || ''}
+                    onChange={handleChange}
+                    className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 shadow-sm focus:border-[var(--primary)] focus:ring-[var(--primary)] p-4 border outline-none transition-all text-sm leading-relaxed resize-none"
+                    placeholder="例如: AIGC 实践心得、开发经验、技术探索笔记"
                   />
+                  <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 flex items-center">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600 mr-2"></span>
+                    前台将以像素风 (Pixel Font) 逐字打印展示，增加复古极客氛围。
+                  </p>
                 </div>
-              )}
+              </section>
+
+              <section>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-6 flex items-center">
+                  <span className="w-1.5 h-5 bg-amber-500 rounded-full mr-3 opacity-80"></span>
+                  视觉氛围
+                </h3>
+                <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">博客背景壁纸</label>
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    {settings.blogBgUrl ? (
+                      <img src={settings.blogBgUrl} alt="Blog BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                    ) : (
+                      <div className="h-24 w-40 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 text-sm border border-dashed border-zinc-300 dark:border-zinc-700">无背景</div>
+                    )}
+                    <div className="flex-1 max-w-md">
+                      <input type="file" accept="image/*" onChange={e => handleUpload(e, 'blogBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                      {uploadProgress['blogBgUrl'] !== undefined && (
+                        <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                          <div className="bg-orange-500 h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['blogBgUrl']}%` }}></div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {settings.blogBgUrl && (
+                    <div className="mt-8 pt-6 border-t border-zinc-200/50 dark:border-zinc-700/50">
+                      <div className="flex justify-between mb-2">
+                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">背景透明度 / 不透明度</label>
+                        <span className="text-sm font-mono text-[var(--primary)]">{settings.blogBgOpacity ?? 1}</span>
+                      </div>
+                      <input type="range" name="blogBgOpacity" min="0" max="1" step="0.05" value={settings.blogBgOpacity ?? 1} onChange={handleChange} className="w-full accent-[var(--primary)]" />
+                    </div>
+                  )}
+                </div>
+              </section>
             </div>
           )}
         </div>
 
-        <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-end">
-          <button type="submit" disabled={loading} className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium rounded-2xl hover:bg-zinc-800 transition-colors disabled:opacity-50">
-            {loading ? '保存中...' : '保存更改'}
+        <div className="pt-8 mt-10 border-t border-zinc-100 dark:border-zinc-800/60 flex justify-end">
+          <button type="submit" disabled={loading} className="px-8 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-semibold rounded-2xl hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:shadow-none transform hover:-translate-y-0.5 disabled:translate-y-0 active:scale-95">
+            {loading ? '正在保存...' : '保存更改'}
           </button>
         </div>
       </form>
