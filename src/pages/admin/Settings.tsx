@@ -164,6 +164,11 @@ export default function Settings() {
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">主页状态徽章 (如: AVAILABLE FOR NEW OPPORTUNITIES)</label>
             <input type="text" name="badgeText" value={settings.badgeText || ''} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" placeholder="留空则不显示徽章" />
           </div>
+
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">技能矩阵标题</label>
+            <input type="text" name="skillsMatrixTitle" value={settings.skillsMatrixTitle || ''} onChange={handleChange} className="mt-1 block w-full rounded-2xl border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 shadow-sm focus:border-zinc-500 focus:ring-zinc-500 p-2.5 border outline-none transition-shadow" placeholder="例如: 技能矩阵 / Skill Matrix" />
+          </div>
           
           <div>
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">头像上传</label>

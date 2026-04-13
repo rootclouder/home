@@ -19,6 +19,7 @@ model Setting {
   heroTitle    String   @default("Hello, I'm a Creator")
   heroSubtitle String   @default("Welcome to my personal space")
   badgeText    String   @default("AVAILABLE FOR NEW OPPORTUNITIES")
+  skillsMatrixTitle String @default("技能矩阵")
   avatarUrl    String?
   heroBgUrl    String?
   heroBgOpacity Float   @default(1.0)
@@ -86,4 +87,14 @@ model ProjectExperience {
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model SkillMatrixItem {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  isVisible Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

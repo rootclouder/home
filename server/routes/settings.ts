@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   let settings = await prisma.setting.findFirst()
   if (!settings) {
     settings = await prisma.setting.create({
-      data: { siteTitle: 'My Portfolio', heroTitle: 'Hello', heroSubtitle: 'Welcome', themeColor: '#000', badgeText: 'AVAILABLE FOR NEW OPPORTUNITIES', heroBgOpacity: 1.0 }
+      data: { siteTitle: 'My Portfolio', heroTitle: 'Hello', heroSubtitle: 'Welcome', themeColor: '#000', badgeText: 'AVAILABLE FOR NEW OPPORTUNITIES', heroBgOpacity: 1.0, skillsMatrixTitle: '技能矩阵' }
     })
   }
   res.json(settings)

@@ -1,5 +1,5 @@
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Settings, FolderKanban, ListTree, FileText, LogOut, Home, Briefcase } from 'lucide-react'
+import { LayoutDashboard, Settings, FolderKanban, ListTree, FileText, LogOut, Home, Briefcase, LayoutGrid } from 'lucide-react'
 import { useStore } from '../store'
 
 export default function AdminLayout() {
@@ -16,6 +16,7 @@ export default function AdminLayout() {
     { name: '项目管理', path: '/admin/projects', icon: FolderKanban },
     { name: '项目经历', path: '/admin/project-experiences', icon: FolderKanban },
     { name: '工作经历', path: '/admin/work-experiences', icon: Briefcase },
+    { name: '技能矩阵', path: '/admin/skill-matrix', icon: LayoutGrid },
     { name: '栏目管理', path: '/admin/categories', icon: ListTree },
     { name: '内容发布', path: '/admin/posts', icon: FileText },
   ]

@@ -11,6 +11,7 @@ export default function Home() {
   const [posts, setPosts] = useState<any[]>([])
   const [experiences, setExperiences] = useState<any[]>([])
   const [projectExperiences, setProjectExperiences] = useState<any[]>([])
+  const [skillMatrixItems, setSkillMatrixItems] = useState<any[]>([])
   const [activePost, setActivePost] = useState<any>(null)
   const [activeExpId, setActiveExpId] = useState<string | null>(null)
   const [activeProjectExpId, setActiveProjectExpId] = useState<string | null>(null)
@@ -22,14 +23,16 @@ export default function Home() {
       fetch('/api/categories').then(r => r.ok ? r.json() : []),
       fetch('/api/posts').then(r => r.ok ? r.json() : []),
       fetch('/api/work-experiences').then(r => r.ok ? r.json() : []),
-      fetch('/api/project-experiences').then(r => r.ok ? r.json() : [])
-    ]).then(([s, p, c, po, exp, pexp]) => {
+      fetch('/api/project-experiences').then(r => r.ok ? r.json() : []),
+      fetch('/api/skill-matrix').then(r => r.ok ? r.json() : []),
+    ]).then(([s, p, c, po, exp, pexp, sm]) => {
       setSettings(s || { siteTitle: 'My Project', heroTitle: 'Welcome', heroSubtitle: 'Setup your site in admin panel', themeColor: '#000' })
       setProjects(p || [])
       setCategories(c || [])
       setPosts(po || [])
       setExperiences(exp || [])
       setProjectExperiences(pexp || [])
+      setSkillMatrixItems(sm || [])
       if ((pexp || []).length > 0) setActiveProjectExpId((pexp || [])[0].id)
       
       // Inject CSS variable for theme color
@@ -97,6 +100,9 @@ export default function Home() {
             {settings.siteTitle}
           </div>
           <div className="flex items-center space-x-6 text-sm font-medium">
+            {skillMatrixItems.filter(s => s.isVisible).length > 0 && (
+              <a href="#skills" className="hover:text-[var(--primary)] transition-colors">技能矩阵</a>
+            )}
             <a href="#experience" className="hover:text-[var(--primary)] transition-colors">工作经历</a>
             <a href="#project-experiences" className="hover:text-[var(--primary)] transition-colors">项目经历</a>
             <a href="#projects" className="hover:text-[var(--primary)] transition-colors">个人项目</a>
@@ -171,15 +177,85 @@ export default function Home() {
         </div>
       </section>
 
+      {skillMatrixItems.filter(s => s.isVisible).length > 0 && (
+        <section id="skills" className="py-28 relative z-10 scroll-mt-24">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="mb-12 text-center flex flex-col items-center gap-4">
+              <h2 className="pixel-font text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white text-balance">
+                {settings.skillsMatrixTitle || '技能矩阵'}
+              </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+                <span className="inline-flex items-center gap-2 justify-center">
+                  <span className="w-2 h-2 rounded-full bg-[var(--primary)] shadow-[0_0_10px_var(--primary)]" />
+                  Hover for details
+                </span>
+                <span className="hidden sm:block h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
+                <span>聚焦我最常用的技术栈与能力点</span>
+              </div>
+            </div>
+
+            <div className="relative w-full max-w-md mx-auto mb-10">
+              <div className="absolute -inset-4 rounded-3xl bg-[var(--primary)]/10 blur-2xl opacity-50 pointer-events-none" />
+              <div className="relative rounded-3xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md px-5 py-4 text-center">
+                <div className="text-xs uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">Status</div>
+                <div className="mt-2 text-sm font-medium text-zinc-800 dark:text-zinc-100">Always learning, always shipping</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {skillMatrixItems.filter(s => s.isVisible).map((item) => (
+                <div
+                  key={item.id}
+                  className="group relative overflow-hidden rounded-3xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/40 dark:bg-zinc-900/35 backdrop-blur-md p-6 transition-[transform,box-shadow,border-color] duration-500 hover:-translate-y-1 hover:border-[var(--primary)]/40 hover:shadow-[0_20px_60px_-40px_rgba(0,0,0,0.35)] dark:hover:shadow-[0_20px_60px_-40px_rgba(0,0,0,0.6)]"
+                >
+                  <div className="pointer-events-none absolute -inset-16 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className="absolute inset-0 rounded-full blur-3xl bg-[var(--primary)]/15" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.18),transparent_55%)] dark:bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.08),transparent_55%)]" />
+                  </div>
+
+                  <div className="relative flex items-start justify-between gap-4">
+                    <div>
+                      <div className="inline-flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[var(--primary)]/80 shadow-[0_0_12px_var(--primary)] transition-transform duration-500 group-hover:scale-110" />
+                        <h3 className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">
+                          {item.title}
+                        </h3>
+                      </div>
+                      <div className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap">
+                        {item.content}
+                      </div>
+                    </div>
+                    <div className="relative shrink-0">
+                      <div className="w-10 h-10 rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/50 dark:bg-zinc-950/30 flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative mt-6 h-px w-full bg-gradient-to-r from-transparent via-zinc-200/70 to-transparent dark:via-zinc-800/70 opacity-80 group-hover:opacity-40 transition-opacity duration-500" />
+                  <div className="relative mt-4 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+                    <span className="tracking-widest uppercase">Skill Node</span>
+                    <span className="inline-flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]/60" />
+                      hover
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Experience Section */}
       {experiences.length > 0 && (
         <section id="experience" className="py-32 relative z-10 scroll-mt-24">
           <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-zinc-900 dark:text-white" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+            <h2 className="pixel-font text-3xl md:text-4xl font-bold text-center mb-16 text-zinc-900 dark:text-white text-balance">
               工作经历
             </h2>
             <div className="relative border-l border-zinc-200 dark:border-zinc-800 ml-4 md:ml-8 lg:ml-12 space-y-12 pb-8">
-              {experiences.map((exp, idx) => {
+              {experiences.map((exp) => {
                 const isActive = activeExpId === exp.id
                 return (
                   <button
@@ -223,12 +299,11 @@ export default function Home() {
       {projectExperiences.length > 0 && (
         <section id="project-experiences" className="py-32 relative z-10 scroll-mt-24">
           <div className="max-w-6xl mx-auto px-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-              <div>
-                <h2 className="text-sm font-bold tracking-widest text-zinc-400 uppercase mb-3">Project Experience</h2>
-                <h3 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white">项目经历</h3>
-              </div>
-              <p className="text-zinc-500 dark:text-zinc-400 max-w-md text-lg">
+            <div className="mb-16 text-center flex flex-col items-center gap-4">
+              <h2 className="pixel-font text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white text-balance">
+                项目经历
+              </h2>
+              <p className="text-zinc-500 dark:text-zinc-400 max-w-2xl text-lg">
                 记录关键项目中的角色、目标与结果，点击左侧时间轴查看详情。
               </p>
             </div>
@@ -300,12 +375,11 @@ export default function Home() {
       {/* Projects Section */}
       <section id="projects" className="py-32 relative z-10 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-            <div>
-              <h2 className="text-sm font-bold tracking-widest text-zinc-400 uppercase mb-3">Personal Projects</h2>
-              <h3 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white">个人项目</h3>
-            </div>
-            <p className="text-zinc-500 dark:text-zinc-400 max-w-md text-lg">
+          <div className="mb-16 text-center flex flex-col items-center gap-4">
+            <h2 className="pixel-font text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white text-balance">
+              个人项目
+            </h2>
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-2xl text-lg">
               这里展示了我近期参与开发或主导的核心项目，涵盖前端交互、全栈开发与用户体验设计。
             </p>
           </div>
@@ -356,13 +430,12 @@ export default function Home() {
       {/* Featured Posts Section */}
       <section id="featured-posts" className="py-32 relative z-10 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 border-b border-zinc-200 dark:border-zinc-800 pb-8">
-            <div>
-              <h2 className="text-sm font-bold tracking-widest text-zinc-400 uppercase mb-3">Tech Blog</h2>
-              <h3 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white">技术博客</h3>
-            </div>
-            <a 
-              href="/articles" 
+          <div className="mb-16 text-center flex flex-col items-center gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-8">
+            <h2 className="pixel-font text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white text-balance">
+              技术博客
+            </h2>
+            <a
+              href="/articles"
               className={`group inline-flex items-center font-bold text-lg hover:opacity-80 transition-opacity ${settings.themeColor?.includes('gradient') ? 'text-primary-gradient' : 'text-[var(--primary)]'}`}
             >
               查看全部博客 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
