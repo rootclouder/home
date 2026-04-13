@@ -9,19 +9,23 @@ export default function Home() {
   const [projects, setProjects] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
   const [posts, setPosts] = useState<any[]>([])
+  const [experiences, setExperiences] = useState<any[]>([])
   const [activePost, setActivePost] = useState<any>(null)
+  const [activeExpId, setActiveExpId] = useState<string | null>(null)
 
   useEffect(() => {
     Promise.all([
       fetch('/api/settings').then(r => r.ok ? r.json() : null),
       fetch('/api/projects').then(r => r.ok ? r.json() : []),
       fetch('/api/categories').then(r => r.ok ? r.json() : []),
-      fetch('/api/posts').then(r => r.ok ? r.json() : [])
-    ]).then(([s, p, c, po]) => {
+      fetch('/api/posts').then(r => r.ok ? r.json() : []),
+      fetch('/api/work-experiences').then(r => r.ok ? r.json() : [])
+    ]).then(([s, p, c, po, exp]) => {
       setSettings(s || { siteTitle: 'My Project', heroTitle: 'Welcome', heroSubtitle: 'Setup your site in admin panel', themeColor: '#000' })
       setProjects(p || [])
       setCategories(c || [])
       setPosts(po || [])
+      setExperiences(exp || [])
       
       // Inject CSS variable for theme color
       if (s?.themeColor) {
@@ -78,6 +82,7 @@ export default function Home() {
             {settings.siteTitle}
           </div>
           <div className="flex items-center space-x-6 text-sm font-medium">
+            <a href="#experience" className="hover:text-[var(--primary)] transition-colors">工作经历</a>
             <a href="#projects" className="hover:text-[var(--primary)] transition-colors">项目展示</a>
             <a href="#featured-posts" className="hover:text-[var(--primary)] transition-colors">精选内容</a>
             {categories.filter(c => !c.parentId).map(c => (
@@ -138,6 +143,50 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* Experience Section */}
+      {experiences.length > 0 && (
+        <section id="experience" className="py-32 relative z-10">
+          <div className="max-w-4xl mx-auto px-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-zinc-900 dark:text-white" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+              工作经历
+            </h2>
+            <div className="relative border-l border-zinc-200 dark:border-zinc-800 ml-4 md:ml-8 lg:ml-12 space-y-12 pb-8">
+              {experiences.map((exp, idx) => {
+                const isActive = activeExpId === exp.id
+                return (
+                  <div key={exp.id} className="relative pl-8 md:pl-12 group cursor-pointer" onClick={() => setActiveExpId(isActive ? null : exp.id)}>
+                    {/* Timeline Node */}
+                    <div className={`absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full transition-all duration-500 ${isActive ? 'bg-[var(--primary)] scale-150' : 'bg-zinc-300 dark:bg-zinc-700 group-hover:bg-[var(--primary)] group-hover:scale-125'}`} style={{ boxShadow: isActive ? '0 0 15px var(--primary)' : 'none' }} />
+                    
+                    <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-2">
+                      <h3 className={`text-xl font-bold transition-colors duration-300 ${isActive ? 'text-[var(--primary)]' : 'text-zinc-900 dark:text-white group-hover:text-[var(--primary)]'}`}>
+                        {exp.company}
+                      </h3>
+                      <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400 font-mono mt-1 md:mt-0">
+                        {exp.startDate} — {exp.endDate}
+                      </span>
+                    </div>
+                    
+                    <h4 className="text-lg text-zinc-700 dark:text-zinc-300 mb-3 font-medium">
+                      {exp.position}
+                    </h4>
+
+                    {/* Expandable Content */}
+                    <div className={`grid transition-all duration-500 ease-in-out ${isActive ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                      <div className="overflow-hidden">
+                        <div className="pt-2 pb-4 text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-wrap border-l-2 border-[var(--primary)]/30 pl-4 mt-2">
+                          {exp.description}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Projects Section */}
       <section id="projects" className="py-32 relative z-10">

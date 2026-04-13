@@ -63,3 +63,15 @@ model Post {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model WorkExperience {
+  id          String   @id @default(cuid())
+  company     String
+  position    String
+  startDate   String
+  endDate     String
+  description String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

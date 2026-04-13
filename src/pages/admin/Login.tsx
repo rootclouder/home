@@ -87,8 +87,7 @@ export default function Login() {
                 <input
                   type="text"
                   required
-                  className="w-full px-4 py-3 bg-zinc-50/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:border-transparent transition-all placeholder:text-zinc-400"
-                  placeholder="admin"
+                  className="w-full px-4 py-3 bg-zinc-50/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:border-transparent transition-all"
                   value={username}
                   onChange={e => setUsername(e.target.value)}
                 />
@@ -101,8 +100,7 @@ export default function Login() {
                 <input
                   type="password"
                   required
-                  className="w-full px-4 py-3 bg-zinc-50/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:border-transparent transition-all placeholder:text-zinc-400"
-                  placeholder="••••••••"
+                  className="w-full px-4 py-3 bg-zinc-50/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:border-transparent transition-all"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                 />
