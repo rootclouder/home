@@ -107,18 +107,18 @@ export default function Projects() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {projects.map((p, index) => (
-              <motion.a 
-                key={p.id} 
-                href={p.projectUrl} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="group relative flex flex-col rounded-3xl overflow-hidden transition-[transform,box-shadow] duration-500 hover:-translate-y-2 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-xl hover:shadow-2xl hover:border-[var(--primary)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+              <motion.a
+                key={p.id}
+                href={p.projectUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="group relative flex flex-col rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] hover:border-white/60 dark:hover:border-white/20 hover:ring-1 hover:ring-[var(--primary)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 + index * 0.1 }}
               >
                 {/* Image Section */}
-                <div className="aspect-[4/3] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 relative z-0">
+                <div className="aspect-[4/3] w-full overflow-hidden bg-white/20 dark:bg-black/20 relative z-0">
                   {p.coverUrl ? (
                     <img
                       src={p.coverUrl}
@@ -126,31 +126,31 @@ export default function Projects() {
                       width={800}
                       height={600}
                       loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 mix-blend-overlay opacity-90 group-hover:opacity-100 group-hover:mix-blend-normal"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-zinc-400 font-medium">Image Not Available</div>
                   )}
                   {/* Arrow Icon that slides in on hover */}
-                  <div className="absolute top-4 right-4 w-10 h-10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg z-20">
+                  <div className="absolute top-4 right-4 w-10 h-10 bg-white/60 dark:bg-black/40 backdrop-blur-md border border-white/30 dark:border-white/10 rounded-full flex items-center justify-center opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg z-20">
                     <ArrowRight className="w-4 h-4 text-zinc-900 dark:text-white -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                   </div>
                 </div>
-                
+
                 {/* Text Content Section */}
-                <div className="p-6 md:p-8 flex flex-col flex-grow z-10 relative bg-white/80 dark:bg-zinc-900/80">
-                  <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-1">
+                <div className="p-6 md:p-8 flex flex-col flex-grow z-10 relative bg-transparent">
+                  <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-1 drop-shadow-sm">
                     {p.title}
                   </h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed line-clamp-2 mb-4 flex-grow">
+                  <p className="text-zinc-600 dark:text-zinc-300 text-sm leading-relaxed line-clamp-2 mb-4 flex-grow drop-shadow-sm">
                     {p.description}
                   </p>
-                  
+
                   {/* Tags */}
                   {p.tags && (
-                    <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
+                    <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-zinc-200/30 dark:border-zinc-700/30">
                       {p.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean).slice(0, 3).map((tag: string) => (
-                        <span key={tag} className="text-xs font-medium px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 group-hover:bg-[var(--primary)]/10 group-hover:text-[var(--primary)] transition-colors duration-300">
+                        <span key={tag} className="text-xs font-medium px-2.5 py-1 rounded-md bg-white/50 dark:bg-white/10 border border-white/20 text-zinc-700 dark:text-zinc-200 group-hover:bg-[var(--primary)]/10 group-hover:text-[var(--primary)] group-hover:border-[var(--primary)]/20 transition-colors duration-300 backdrop-blur-sm">
                           {tag}
                         </span>
                       ))}
