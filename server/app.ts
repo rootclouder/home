@@ -17,6 +17,7 @@ import categoriesRoutes from './routes/categories.js'
 import postsRoutes from './routes/posts.js'
 import uploadRoutes from './routes/upload.js'
 import workExperiencesRoutes from './routes/work-experiences.js'
+import projectExperiencesRoutes from './routes/project-experiences.js'
 
 // fallback for CommonJS or ESM
 const _dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
@@ -40,6 +41,7 @@ app.use('/api/categories', categoriesRoutes)
 app.use('/api/posts', postsRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/work-experiences', workExperiencesRoutes)
+app.use('/api/project-experiences', projectExperiencesRoutes)
 
 // Serve uploads statically (only needed for local development if not using Blob, but we use Blob now)
 // app.use('/uploads', express.static(path.join(_dirname, '../uploads')))

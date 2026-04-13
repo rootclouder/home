@@ -9,6 +9,7 @@ import Projects from './pages/admin/Projects'
 import Categories from './pages/admin/Categories'
 import Posts from './pages/admin/Posts'
 import WorkExperiences from './pages/admin/WorkExperiences'
+import ProjectExperiences from './pages/admin/ProjectExperiences'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="settings" element={<Settings />} />
           <Route path="projects" element={<Projects />} />
+          <Route path="project-experiences" element={<ProjectExperiences />} />
           <Route path="work-experiences" element={<WorkExperiences />} />
           <Route path="categories" element={<Categories />} />
           <Route path="posts" element={<Posts />} />

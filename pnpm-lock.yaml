@@ -18,7 +18,7 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@18.3.1)
       '@prisma/client':
-        specifier: ^6.19.3
+        specifier: 6.19.3
         version: 6.19.3(prisma@6.19.3(typescript@5.8.3))(typescript@5.8.3)
       '@uiw/react-md-editor':
         specifier: ^4.1.0
@@ -139,7 +139,7 @@ importers:
         specifier: ^8.5.3
         version: 8.5.9
       prisma:
-        specifier: ^6.19.3
+        specifier: 6.19.3
         version: 6.19.3(typescript@5.8.3)
       tailwindcss:
         specifier: ^3.4.17

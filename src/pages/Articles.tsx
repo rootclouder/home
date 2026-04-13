@@ -303,15 +303,21 @@ export default function Articles() {
       {/* Post Modal */}
       {activePost && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-12 bg-black/60 backdrop-blur-sm">
-          <div className="absolute inset-0" onClick={() => setActivePost(null)}></div>
+          <button
+            type="button"
+            className="absolute inset-0"
+            onClick={() => setActivePost(null)}
+            aria-label="关闭"
+          />
           <div className="relative bg-white dark:bg-zinc-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="flex items-center justify-between p-6 border-b border-zinc-100 dark:border-zinc-800">
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-white truncate pr-8">{activePost.title}</h2>
               <button 
                 onClick={() => setActivePost(null)}
                 className="absolute top-6 right-6 p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                aria-label="关闭"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-6 md:p-10">
@@ -333,4 +339,3 @@ export default function Articles() {
     </div>
   )
 }
-
