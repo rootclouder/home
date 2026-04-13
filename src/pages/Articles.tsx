@@ -95,6 +95,40 @@ export default function Articles() {
     }
   }, [categories, map, expandedCategories.size])
 
+  // Handle clicking outside the article content to close it
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activePost) {
+        setActivePost(null)
+      }
+    }
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      if (activePost) {
+        const articleContainer = document.getElementById('article-content-container')
+        if (articleContainer && !articleContainer.contains(e.target as Node)) {
+          // Check if we didn't click inside a button/link which might be navigation
+          const target = e.target as HTMLElement
+          if (!target.closest('button') && !target.closest('a')) {
+             setActivePost(null)
+          }
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleEsc)
+    // Add click listener with a slight delay to avoid triggering on the click that opens the post
+    const timer = setTimeout(() => {
+      window.addEventListener('click', handleClickOutside)
+    }, 100)
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+      window.removeEventListener('click', handleClickOutside)
+      clearTimeout(timer)
+    }
+  }, [activePost])
+
   if (!settings) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
@@ -259,6 +293,7 @@ export default function Articles() {
               </motion.div>
             ) : (
               <motion.div
+                id="article-content-container"
                 key="post-view"
                 layoutId={`post-${activePost.id}`}
                 className="bg-white dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 md:p-12 shadow-xl"
