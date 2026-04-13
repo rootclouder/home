@@ -195,126 +195,104 @@ export default function Articles() {
 
         {/* Main Content Container */}
         <main className="max-w-4xl mx-auto px-4 sm:px-6 pb-24 relative z-10">
-          <motion.div 
-            className="bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 md:p-10 shadow-sm"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
-            {tree.length === 0 ? (
-              <div className="text-center py-20 text-zinc-500">
-                暂无分类数据
-              </div>
-            ) : (
-              <div className="space-y-12">
-                {tree.map((category: any) => {
-                  const descendantIds = getDescendantIds(category)
-                  const count = posts.filter(p => descendantIds.includes(p.categoryId)).length
-                  
-                  return (
-                    <div key={category.id} className="group">
-                      {/* Top Level Category Header */}
-                      <div className="flex items-center gap-3 mb-6">
-                        <Folder className="w-6 h-6 text-[var(--primary)]" />
-                        <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">{category.name}</h2>
-                        <span className="px-2.5 py-0.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold tabular-nums">
-                          {count}
-                        </span>
-                      </div>
-
-                      {/* Content of Top Level Category */}
-                      <div className="space-y-3">
-                        {category.children && category.children.map((child: any) => (
-                          <SubCategoryAccordion 
-                            key={child.id}
-                            category={child}
-                            posts={posts}
-                            expandedCategories={expandedCategories}
-                            toggleExpand={toggleExpand}
-                            setActivePost={setActivePost}
-                            getDescendantIds={getDescendantIds}
-                          />
-                        ))}
-                        
-                        {/* Direct posts under this top level category */}
-                        {posts.filter(p => p.categoryId === category.id).map(post => (
-                          <PostRow key={post.id} post={post} onClick={() => setActivePost(post)} />
-                        ))}
-
-                        {count === 0 && (
-                          <div className="pl-9 text-sm text-zinc-400">
-                            该分类下暂无文章
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </motion.div>
-        </main>
-
-        {/* Footer */}
-        <footer className="py-12 text-center text-zinc-500 dark:text-zinc-400 relative z-10">
-          <p className="font-medium text-sm">© {new Date().getFullYear()} {settings.siteTitle}. All rights reserved.</p>
-        </footer>
-      </div>
-
-      {/* Full Screen Post Reader Modal */}
-      <AnimatePresence>
-        {activePost && (
-          <motion.div 
-            className="fixed inset-0 z-[100] flex justify-center overflow-y-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Backdrop */}
-            <motion.div 
-              className="fixed inset-0 bg-zinc-50/95 dark:bg-zinc-950/95 backdrop-blur-md"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActivePost(null)}
-            />
-            
-            <motion.div 
-              layoutId={`post-${activePost.id}`}
-              className="w-full max-w-4xl min-h-screen bg-white dark:bg-zinc-900 shadow-2xl relative z-10"
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              <button 
-                onClick={() => setActivePost(null)} 
-                className="fixed top-4 right-4 md:top-8 md:right-8 p-3 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors z-50 shadow-sm hover:scale-110 active:scale-95"
-                aria-label="关闭文章"
+          <AnimatePresence mode="wait">
+            {!activePost ? (
+              <motion.div 
+                key="list-view"
+                className="bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 md:p-10 shadow-sm"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
               >
-                <X className="w-6 h-6" />
-              </button>
-              
-              <div className="px-6 py-16 md:px-16 md:py-24">
-                {/* Post Header */}
-                <div className="mb-12">
-                  <motion.h1 
-                    layoutId={`post-title-${activePost.id}`}
-                    className="text-3xl md:text-5xl font-extrabold text-zinc-900 dark:text-white leading-tight mb-6"
+                {tree.length === 0 ? (
+                  <div className="text-center py-20 text-zinc-500">
+                    暂无分类数据
+                  </div>
+                ) : (
+                  <div className="space-y-12">
+                    {tree.map((category: any) => {
+                      const descendantIds = getDescendantIds(category)
+                      const count = posts.filter(p => descendantIds.includes(p.categoryId)).length
+                      
+                      return (
+                        <div key={category.id} className="group">
+                          {/* Top Level Category Header */}
+                          <div className="flex items-center gap-3 mb-6">
+                            <Folder className="w-6 h-6 text-[var(--primary)]" />
+                            <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">{category.name}</h2>
+                            <span className="px-2.5 py-0.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold tabular-nums">
+                              {count}
+                            </span>
+                          </div>
+
+                          {/* Content of Top Level Category */}
+                          <div className="space-y-3">
+                            {category.children && category.children.map((child: any) => (
+                              <SubCategoryAccordion 
+                                key={child.id}
+                                category={child}
+                                posts={posts}
+                                expandedCategories={expandedCategories}
+                                toggleExpand={toggleExpand}
+                                setActivePost={setActivePost}
+                                getDescendantIds={getDescendantIds}
+                              />
+                            ))}
+                            
+                            {/* Direct posts under this top level category */}
+                            {posts.filter(p => p.categoryId === category.id).map(post => (
+                              <PostRow key={post.id} post={post} onClick={() => setActivePost(post)} />
+                            ))}
+
+                            {count === 0 && (
+                              <div className="pl-9 text-sm text-zinc-400">
+                                该分类下暂无文章
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="post-view"
+                layoutId={`post-${activePost.id}`}
+                className="bg-white dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 md:p-12 shadow-xl"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <div className="flex justify-between items-start mb-12 border-b border-zinc-100 dark:border-zinc-800/50 pb-8">
+                  <div>
+                    <motion.h1 
+                      layoutId={`post-title-${activePost.id}`}
+                      className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-zinc-900 dark:text-white leading-tight mb-6"
+                    >
+                      {activePost.title}
+                    </motion.h1>
+                    <motion.div 
+                      className="flex flex-wrap items-center gap-4 text-zinc-500 dark:text-zinc-400 font-medium text-sm"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <span className="flex items-center gap-1.5"><Folder className="w-4 h-4" /> {activePost.category?.name || '未分类'}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(activePost.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    </motion.div>
+                  </div>
+                  <button 
+                    onClick={() => setActivePost(null)} 
+                    className="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all shadow-sm hover:scale-105 active:scale-95 shrink-0 ml-4"
+                    aria-label="返回列表"
                   >
-                    {activePost.title}
-                  </motion.h1>
-                  <motion.div 
-                    className="flex flex-wrap items-center gap-4 text-zinc-500 dark:text-zinc-400 font-medium text-sm md:text-base"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <span className="flex items-center gap-1.5"><Folder className="w-4 h-4" /> {activePost.category?.name || '未分类'}</span>
-                    <span className="hidden md:inline">•</span>
-                    <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(activePost.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                  </motion.div>
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
                 
                 {/* Post Content */}
@@ -322,7 +300,7 @@ export default function Articles() {
                   className="prose dark:prose-invert max-w-none prose-zinc prose-headings:text-[var(--primary)] prose-a:text-[var(--primary)] prose-img:rounded-2xl"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                  transition={{ delay: 0.2 }}
                 >
                   <div data-color-mode="light" className="dark:hidden">
                     <MDEditor.Markdown source={activePost.content} style={{ backgroundColor: 'transparent', color: 'inherit' }} />
@@ -331,11 +309,16 @@ export default function Articles() {
                     <MDEditor.Markdown source={activePost.content} style={{ backgroundColor: 'transparent', color: 'inherit' }} />
                   </div>
                 </motion.div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </main>
+
+        {/* Footer */}
+        <footer className="py-12 text-center text-zinc-500 dark:text-zinc-400 relative z-10">
+          <p className="font-medium text-sm">© {new Date().getFullYear()} {settings.siteTitle}. All rights reserved.</p>
+        </footer>
+      </div>
 
       {/* Floating Robot for Admin Navigation */}
       <FloatingRobot />
