@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Folder, ChevronRight, X, Calendar, FileText } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import FloatingRobot from '../components/FloatingRobot'
 
 interface ExtendedSetting {
@@ -252,7 +252,7 @@ export default function Articles() {
                 })}
               </div>
             )}
-          </div>
+          </motion.div>
         </main>
 
         {/* Footer */}
@@ -262,41 +262,80 @@ export default function Articles() {
       </div>
 
       {/* Full Screen Post Reader Modal */}
-      {activePost && (
-        <div className="fixed inset-0 z-[100] flex justify-center bg-zinc-50/95 dark:bg-zinc-950/95 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
-          <div className="w-full max-w-4xl min-h-screen bg-white dark:bg-zinc-900 shadow-2xl relative animate-in slide-in-from-bottom-8 duration-500">
-            <button 
-              onClick={() => setActivePost(null)} 
-              className="fixed top-4 right-4 md:top-8 md:right-8 p-3 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors z-50 shadow-sm"
-              aria-label="关闭文章"
-            >
-              <X className="w-6 h-6" />
-            </button>
+      <AnimatePresence>
+        {activePost && (
+          <motion.div 
+            className="fixed inset-0 z-[100] flex justify-center overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Backdrop */}
+            <motion.div 
+              className="fixed inset-0 bg-zinc-50/95 dark:bg-zinc-950/95 backdrop-blur-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActivePost(null)}
+            />
             
-            <div className="px-6 py-16 md:px-16 md:py-24">
-              {/* Post Header */}
-              <div className="mb-12">
-                <h1 className="text-3xl md:text-5xl font-extrabold text-zinc-900 dark:text-white leading-tight mb-6">{activePost.title}</h1>
-                <div className="flex flex-wrap items-center gap-4 text-zinc-500 dark:text-zinc-400 font-medium text-sm md:text-base">
-                  <span className="flex items-center gap-1.5"><Folder className="w-4 h-4" /> {activePost.category?.name || '未分类'}</span>
-                  <span className="hidden md:inline">•</span>
-                  <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(activePost.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                </div>
-              </div>
+            <motion.div 
+              layoutId={`post-${activePost.id}`}
+              className="w-full max-w-4xl min-h-screen bg-white dark:bg-zinc-900 shadow-2xl relative z-10"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <button 
+                onClick={() => setActivePost(null)} 
+                className="fixed top-4 right-4 md:top-8 md:right-8 p-3 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors z-50 shadow-sm hover:scale-110 active:scale-95"
+                aria-label="关闭文章"
+              >
+                <X className="w-6 h-6" />
+              </button>
               
-              {/* Post Content */}
-              <div className="prose dark:prose-invert max-w-none prose-zinc prose-headings:text-[var(--primary)] prose-a:text-[var(--primary)] prose-img:rounded-2xl">
-                <div data-color-mode="light" className="dark:hidden">
-                  <MDEditor.Markdown source={activePost.content} style={{ backgroundColor: 'transparent', color: 'inherit' }} />
+              <div className="px-6 py-16 md:px-16 md:py-24">
+                {/* Post Header */}
+                <div className="mb-12">
+                  <motion.h1 
+                    layoutId={`post-title-${activePost.id}`}
+                    className="text-3xl md:text-5xl font-extrabold text-zinc-900 dark:text-white leading-tight mb-6"
+                  >
+                    {activePost.title}
+                  </motion.h1>
+                  <motion.div 
+                    className="flex flex-wrap items-center gap-4 text-zinc-500 dark:text-zinc-400 font-medium text-sm md:text-base"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <span className="flex items-center gap-1.5"><Folder className="w-4 h-4" /> {activePost.category?.name || '未分类'}</span>
+                    <span className="hidden md:inline">•</span>
+                    <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(activePost.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  </motion.div>
                 </div>
-                <div data-color-mode="dark" className="hidden dark:block">
-                  <MDEditor.Markdown source={activePost.content} style={{ backgroundColor: 'transparent', color: 'inherit' }} />
-                </div>
+                
+                {/* Post Content */}
+                <motion.div 
+                  className="prose dark:prose-invert max-w-none prose-zinc prose-headings:text-[var(--primary)] prose-a:text-[var(--primary)] prose-img:rounded-2xl"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <div data-color-mode="light" className="dark:hidden">
+                    <MDEditor.Markdown source={activePost.content} style={{ backgroundColor: 'transparent', color: 'inherit' }} />
+                  </div>
+                  <div data-color-mode="dark" className="hidden dark:block">
+                    <MDEditor.Markdown source={activePost.content} style={{ backgroundColor: 'transparent', color: 'inherit' }} />
+                  </div>
+                </motion.div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Floating Robot for Admin Navigation */}
       <FloatingRobot />
@@ -351,19 +390,23 @@ function SubCategoryAccordion({ category, posts, expandedCategories, toggleExpan
 
 function PostRow({ post, onClick }: { post: any, onClick: () => void }) {
   return (
-    <button 
+    <motion.button 
+      layoutId={`post-${post.id}`}
       onClick={onClick}
       className="w-full group flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl hover:bg-zinc-100/80 dark:hover:bg-zinc-800/50 transition-colors text-left gap-2"
     >
       <div className="flex items-center gap-3 overflow-hidden">
         <FileText className="w-4 h-4 text-zinc-400 group-hover:text-[var(--primary)] shrink-0 transition-colors" />
-        <span className="text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white truncate transition-colors font-medium">
+        <motion.span 
+          layoutId={`post-title-${post.id}`}
+          className="text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white truncate transition-colors font-medium"
+        >
           {post.title}
-        </span>
+        </motion.span>
       </div>
       <span className="text-xs text-zinc-400 shrink-0 sm:ml-4 tabular-nums font-medium tracking-wide">
         {new Date(post.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
       </span>
-    </button>
+    </motion.button>
   )
 }
