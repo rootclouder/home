@@ -20,6 +20,8 @@ model Setting {
   heroSubtitle String   @default("Welcome to my personal space")
   badgeText    String   @default("AVAILABLE FOR NEW OPPORTUNITIES")
   skillsMatrixTitle String @default("技能矩阵")
+  projectsSubtitle String @default("这里展示了我近期参与开发或主导的核心项目，涵盖前端交互、全栈开发与用户体验设计。")
+  blogSubtitle String @default("AIGC 实践心得、开发经验、技术探索笔记")
   avatarUrl    String?
   heroBgUrl    String?
   heroBgOpacity Float   @default(1.0)

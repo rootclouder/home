@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { Project } from '@prisma/client'
 import FloatingRobot from '../components/FloatingRobot'
+import Typewriter from 'typewriter-effect'
 
 // Extending Project to match the data we fetch
 interface ExtendedProject extends Project {
@@ -16,6 +17,7 @@ interface ExtendedSetting {
   themeColor: string
   projectsBgUrl?: string | null
   projectsBgOpacity?: number
+  projectsSubtitle?: string
 }
 
 export default function Projects() {
@@ -85,9 +87,22 @@ export default function Projects() {
             <h1 className="pixel-font text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white text-balance drop-shadow-md">
               作品集
             </h1>
-            <p className="text-zinc-600 dark:text-zinc-300 max-w-2xl text-lg drop-shadow-sm font-medium bg-white/40 dark:bg-black/40 px-6 py-2 rounded-full backdrop-blur-sm">
-              这里展示了我近期参与开发或主导的核心项目，涵盖前端交互、全栈开发与用户体验设计。
-            </p>
+            <div className="text-zinc-600 dark:text-zinc-300 max-w-2xl text-lg drop-shadow-sm font-medium bg-white/40 dark:bg-black/40 px-6 py-2 rounded-full backdrop-blur-sm">
+              <div className="pixel-font tracking-wide">
+                <Typewriter
+                  options={{
+                    strings: settings?.projectsSubtitle 
+                      ? settings.projectsSubtitle.split(',').map(s => s.trim())
+                      : ['这里展示了我近期参与开发或主导的核心项目', '涵盖前端交互、全栈开发与用户体验设计'],
+                    autoStart: true,
+                    loop: true,
+                    delay: 50,
+                    deleteSpeed: 30,
+                    cursor: '_'
+                  }}
+                />
+              </div>
+            </div>
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">

@@ -4,6 +4,7 @@ import { ArrowLeft, Folder, ChevronRight, X, Calendar, FileText } from 'lucide-r
 import MDEditor from '@uiw/react-md-editor'
 import { motion, AnimatePresence } from 'framer-motion'
 import FloatingRobot from '../components/FloatingRobot'
+import Typewriter from 'typewriter-effect'
 
 interface ExtendedSetting {
   siteTitle: string
@@ -12,6 +13,7 @@ interface ExtendedSetting {
   heroBgOpacity?: number
   blogBgUrl?: string | null
   blogBgOpacity?: number
+  blogSubtitle?: string
 }
 
 export default function Articles() {
@@ -209,14 +211,27 @@ export default function Articles() {
           >
             博客
           </motion.h1>
-          <motion.p 
-            className="text-zinc-500 dark:text-zinc-400 text-lg max-w-2xl mx-auto mb-8"
+          <motion.div 
+            className="text-zinc-500 dark:text-zinc-400 text-lg max-w-2xl mx-auto mb-8 h-8 flex items-center justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            AIGC 实践心得、开发经验、技术探索笔记
-          </motion.p>
+            <div className="pixel-font tracking-wide">
+              <Typewriter
+                options={{
+                  strings: settings?.blogSubtitle 
+                    ? settings.blogSubtitle.split(',').map(s => s.trim())
+                    : ['AIGC 实践心得', '开发经验', '技术探索笔记'],
+                  autoStart: true,
+                  loop: true,
+                  delay: 50,
+                  deleteSpeed: 30,
+                  cursor: '_'
+                }}
+              />
+            </div>
+          </motion.div>
           <motion.div 
             className="inline-flex items-center px-4 py-1.5 rounded-full bg-zinc-200/50 dark:bg-zinc-800/50 text-sm font-medium text-zinc-600 dark:text-zinc-300"
             initial={{ opacity: 0, y: 20 }}
