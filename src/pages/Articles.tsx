@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Folder, ChevronRight, X, Calendar, FileText } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
+import { motion } from 'framer-motion'
 import FloatingRobot from '../components/FloatingRobot'
 
 interface ExtendedSetting {
@@ -166,18 +167,40 @@ export default function Articles() {
 
         {/* Hero Section */}
         <div className="pt-24 pb-16 px-6 text-center relative z-10">
-          <h1 className="pixel-font text-4xl md:text-5xl font-extrabold tracking-tight mb-6">博客</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-lg max-w-2xl mx-auto mb-8">
+          <motion.h1 
+            className="pixel-font text-4xl md:text-5xl font-extrabold tracking-tight mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            博客
+          </motion.h1>
+          <motion.p 
+            className="text-zinc-500 dark:text-zinc-400 text-lg max-w-2xl mx-auto mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
             AIGC 实践心得、开发经验、技术探索笔记
-          </p>
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-zinc-200/50 dark:bg-zinc-800/50 text-sm font-medium text-zinc-600 dark:text-zinc-300">
+          </motion.p>
+          <motion.div 
+            className="inline-flex items-center px-4 py-1.5 rounded-full bg-zinc-200/50 dark:bg-zinc-800/50 text-sm font-medium text-zinc-600 dark:text-zinc-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
             共 {totalPosts} 篇文章
-          </div>
+          </motion.div>
         </div>
 
         {/* Main Content Container */}
         <main className="max-w-4xl mx-auto px-4 sm:px-6 pb-24 relative z-10">
-          <div className="bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 md:p-10 shadow-sm">
+          <motion.div 
+            className="bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 rounded-[2rem] p-6 md:p-10 shadow-sm"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
             {tree.length === 0 ? (
               <div className="text-center py-20 text-zinc-500">
                 暂无分类数据

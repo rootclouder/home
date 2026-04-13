@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 import type { Project } from '@prisma/client'
 import FloatingRobot from '../components/FloatingRobot'
 
@@ -75,23 +76,31 @@ export default function Projects() {
       {/* Main Content */}
       <div className="relative z-20 pt-32 pb-24 min-h-screen flex flex-col">
         <div className="max-w-7xl mx-auto px-6 w-full flex-1">
-          <div className="mb-16 text-center flex flex-col items-center gap-4">
+          <motion.div 
+            className="mb-16 text-center flex flex-col items-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
             <h1 className="pixel-font text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white text-balance drop-shadow-md">
               作品集
             </h1>
             <p className="text-zinc-600 dark:text-zinc-300 max-w-2xl text-lg drop-shadow-sm font-medium bg-white/40 dark:bg-black/40 px-6 py-2 rounded-full backdrop-blur-sm">
               这里展示了我近期参与开发或主导的核心项目，涵盖前端交互、全栈开发与用户体验设计。
             </p>
-          </div>
+          </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
             {projects.map((p, index) => (
-              <a 
+              <motion.a 
                 key={p.id} 
                 href={p.projectUrl} 
                 target="_blank" 
                 rel="noreferrer" 
                 className={`group relative flex flex-col rounded-3xl overflow-hidden transition-[transform,box-shadow] duration-500 hover:-translate-y-2 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-xl hover:shadow-2xl hover:border-[var(--primary)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] ${index % 2 === 1 ? 'md:mt-16' : ''}`}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 + index * 0.1 }}
               >
                 <div className="aspect-[4/3] w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 relative z-0">
                   {p.coverUrl ? (
@@ -126,11 +135,11 @@ export default function Projects() {
                   </div>
 
                   <div className="absolute top-6 right-6 w-12 h-12 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-[transform,opacity] duration-500 delay-100 shadow-xl z-20">
-                    <ArrowRight className="w-5 h-5 text-zinc-900 dark:text-white -rotate-45 group-hover:rotate-0 transition-transform duration-500" />
+                      <ArrowRight className="w-5 h-5 text-zinc-900 dark:text-white -rotate-45 group-hover:rotate-0 transition-transform duration-500" />
+                    </div>
                   </div>
-                </div>
-              </a>
-            ))}
+                </motion.a>
+              ))}
           </div>
 
           {projects.length === 0 && (

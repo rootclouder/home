@@ -4,6 +4,7 @@ import MDEditor from '@uiw/react-md-editor'
 import Typewriter from 'typewriter-effect'
 import FloatingRobot from '../components/FloatingRobot'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import type { Project, Post, Category, WorkExperience, ProjectExperience } from '@prisma/client'
 
 interface ExtendedSetting {
@@ -135,7 +136,12 @@ export default function Home() {
               </div>
             )} */}
             
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
+            <motion.h1 
+              className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
               <span className="block text-transparent bg-clip-text" style={settings.themeColor?.includes('gradient') ? { backgroundImage: settings.themeColor } : { backgroundColor: 'var(--primary)', backgroundImage: `linear-gradient(to right, var(--primary), var(--primary))` }}>
                 <Typewriter
                   options={{
@@ -147,11 +153,13 @@ export default function Home() {
                   }}
                 />
               </span>
-            </h1>
+            </motion.h1>
             
-            <div 
-              className="mx-auto lg:mx-0 inline-flex items-center gap-4 px-6 py-3.5 mb-12 border border-zinc-200/80 dark:border-zinc-800/80 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md rounded-full shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.2)] animate-fade-in-up group hover:border-[var(--primary)]/30 transition-[border-color,box-shadow,background-color] duration-500"
-              style={{ animationDelay: '300ms', animationFillMode: 'both' }}
+            <motion.div 
+              className="mx-auto lg:mx-0 inline-flex items-center gap-4 px-6 py-3.5 mb-12 border border-zinc-200/80 dark:border-zinc-800/80 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md rounded-full shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.2)] group hover:border-[var(--primary)]/30 transition-[border-color,box-shadow,background-color] duration-500"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
             >
               <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[var(--primary)]/10">
                 <div className="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse shadow-[0_0_8px_var(--primary)]" />
@@ -159,14 +167,19 @@ export default function Home() {
               <p className="text-base sm:text-lg text-zinc-700 dark:text-zinc-200 font-medium tracking-wide">
                 {settings.heroSubtitle}
               </p>
-            </div>
+            </motion.div>
             
             {/* 这里原本是 "查看精选作品" 和 "阅读技术随笔" 的按钮链接 */}
             {/* <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 animate-fade-in-up" style={{ animationDelay: '500ms', animationFillMode: 'both' }}> ... </div> */}
           </div>
           
           {settings.avatarUrl && (
-            <div className="flex-1 flex justify-center lg:justify-end animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
+            <motion.div 
+              className="flex-1 flex justify-center lg:justify-end"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.2 }}
+            >
               <div className="relative group">
                 <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-tr from-[var(--primary)] to-transparent opacity-20 group-hover:opacity-40 blur-2xl transition-opacity duration-700 animate-pulse"></div>
                 <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-tr from-[var(--primary)] to-white/10 opacity-30 group-hover:opacity-60 blur-md transition-opacity duration-700"></div>
@@ -179,7 +192,7 @@ export default function Home() {
                   className="relative z-10 w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-[2rem] border border-white/20 dark:border-zinc-800/50 shadow-2xl object-cover transition-transform duration-700 group-hover:scale-[1.02] group-hover:-rotate-2" 
                 />
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </section>

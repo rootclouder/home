@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import Home from './pages/Home'
 import ProjectsPage from './pages/Projects'
 import Articles from './pages/Articles'
@@ -13,15 +14,30 @@ import WorkExperiences from './pages/admin/WorkExperiences'
 import ProjectExperiences from './pages/admin/ProjectExperiences'
 import SkillMatrix from './pages/admin/SkillMatrix'
 
-function App() {
+const PageTransition = ({ children }: { children: React.ReactNode }) => {
   return (
-    <BrowserRouter>
-        <Routes>
-          {/* Public Home Page */}
-          <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/articles" element={<Articles />} />
-        
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function AnimatedRoutes() {
+  const location = useLocation()
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Public Home Page */}
+        <Route path="/" element={<PageTransition><Home /></PageTransition>} />
+        <Route path="/projects" element={<PageTransition><ProjectsPage /></PageTransition>} />
+        <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
+      
         {/* Admin Routes */}
         <Route path="/admin/login" element={<Login />} />
 
@@ -37,6 +53,14 @@ function App() {
           <Route path="posts" element={<Posts />} />
         </Route>
       </Routes>
+    </AnimatePresence>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
     </BrowserRouter>
   )
 }
