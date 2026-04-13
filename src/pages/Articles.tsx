@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, Folder, ChevronRight, X, Calendar, FileText } from 'lucide-react'
+import { ArrowLeft, Folder, ChevronRight, X, FileText } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
 import { motion, AnimatePresence } from 'framer-motion'
 import FloatingRobot from '../components/FloatingRobot'
@@ -332,8 +332,6 @@ export default function Articles() {
                       transition={{ delay: 0.1 }}
                     >
                       <span className="flex items-center gap-1.5"><Folder className="w-4 h-4" /> {activePost.category?.name || '未分类'}</span>
-                      <span className="hidden sm:inline">•</span>
-                      <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(activePost.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                     </motion.div>
                   </div>
                   <button 
