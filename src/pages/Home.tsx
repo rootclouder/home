@@ -120,9 +120,17 @@ export default function Home() {
               </span>
             </h1>
             
-            <p className="text-xl sm:text-2xl text-zinc-500 dark:text-zinc-400 mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light tracking-wide animate-fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'both' }}>
-              {settings.heroSubtitle}
-            </p>
+            <div 
+              className="mx-auto lg:mx-0 inline-flex items-center gap-4 px-6 py-3.5 mb-12 border border-zinc-200/80 dark:border-zinc-800/80 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md rounded-full shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.2)] animate-fade-in-up group hover:border-[var(--primary)]/30 transition-all duration-500"
+              style={{ animationDelay: '300ms', animationFillMode: 'both' }}
+            >
+              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[var(--primary)]/10">
+                <div className="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse shadow-[0_0_8px_var(--primary)]" />
+              </div>
+              <p className="text-base sm:text-lg text-zinc-700 dark:text-zinc-200 font-medium tracking-wide">
+                {settings.heroSubtitle}
+              </p>
+            </div>
             
             {/* 这里原本是 "查看精选作品" 和 "阅读技术随笔" 的按钮链接 */}
             {/* <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 animate-fade-in-up" style={{ animationDelay: '500ms', animationFillMode: 'both' }}> ... </div> */}
