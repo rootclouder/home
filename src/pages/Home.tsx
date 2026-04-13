@@ -188,7 +188,7 @@ export default function Home() {
                   alt="Avatar"
                   width={384}
                   height={384}
-                  fetchpriority="high"
+                  fetchPriority="high"
                   className="relative z-10 w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-[2rem] border border-white/20 dark:border-zinc-800/50 shadow-2xl object-cover transition-transform duration-700 group-hover:scale-[1.02] group-hover:-rotate-2" 
                 />
               </div>
