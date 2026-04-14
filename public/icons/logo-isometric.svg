@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="120" fill="#18181b" />
+  
+  <g transform="translate(256, 280)">
+    <!-- Bottom face -->
+    <path d="M-120 -20 L0 50 L120 -20 L0 -90 Z" fill="#27272a" />
+    
+    <!-- Back face -->
+    <path d="M-120 -20 L-120 -140 L0 -210 L0 -90 Z" fill="#3f3f46" />
+    
+    <!-- Right face -->
+    <path d="M120 -20 L120 -140 L0 -210 L0 -90 Z" fill="#52525b" />
+    
+    <!-- The C blocks (3D) -->
+    <!-- Top block -->
+    <path d="M-80 -180 L0 -133 L40 -156 L-40 -203 Z" fill="#60a5fa" />
+    <path d="M-80 -180 L-80 -150 L0 -103 L0 -133 Z" fill="#2563eb" />
+    <path d="M0 -133 L0 -103 L40 -126 L40 -156 Z" fill="#1d4ed8" />
+    
+    <!-- Left pillar block -->
+    <path d="M-80 -150 L-40 -126 L-40 0 L-80 -23 Z" fill="#3b82f6" />
+    <path d="M-40 -126 L-40 0 L0 23 L0 -103 Z" fill="#1e40af" />
+    
+    <!-- Bottom block -->
+    <path d="M-80 -23 L0 23 L80 -23 L0 -69 Z" fill="#93c5fd" />
+    <path d="M0 23 L0 53 L80 7 L80 -23 Z" fill="#2563eb" />
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="120" fill="#ffffff" />
+  
+  <g transform="translate(106, 106)">
+    <!-- Outer hexagon/cube -->
+    <path d="M150 0 L300 86 L300 260 L150 346 L0 260 L0 86 Z" fill="none" stroke="#0f172a" stroke-width="24" stroke-linejoin="round" />
+    
+    <!-- Inner C shape -->
+    <path d="M220 90 L150 50 L70 96 L70 250 L150 296 L220 256" fill="none" stroke="#3b82f6" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- Accent dot -->
+    <circle cx="220" cy="173" r="20" fill="#f43f5e" />
+  </g>
+</svg>
