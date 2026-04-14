@@ -132,28 +132,38 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
   }, [menuOpen])
 
   useEffect(() => {
+    let animationFrameId: number;
+
     const handlePointerMove = (e: PointerEvent) => {
-      if (robotRef.current && !menuOpen) {
-        const rect = robotRef.current.getBoundingClientRect()
-        const coreCenterX = rect.left + 28
-        const coreCenterY = rect.top + 28
-        const dx = e.clientX - coreCenterX
-        const dy = e.clientY - coreCenterY
-        const angle = Math.atan2(dy, dx)
-        const distance = Math.min(4.5, Math.hypot(dx, dy) / 20)
-        setCoreOffset({
-          x: Math.cos(angle) * distance,
-          y: Math.sin(angle) * distance,
-        })
+      // Throttle mouse movement via requestAnimationFrame
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
       }
-      if (dragRef.current.isDragging) {
-        dragRef.current.hasMoved = true
-        let newX = dragRef.current.elemX + (e.clientX - dragRef.current.startX)
-        let newY = dragRef.current.elemY + (e.clientY - dragRef.current.startY)
-        newX = Math.max(10, Math.min(window.innerWidth - 66, newX))
-        newY = Math.max(20, Math.min(window.innerHeight - 76, newY))
-        setPosition({ x: newX, y: newY })
-      }
+
+      animationFrameId = requestAnimationFrame(() => {
+        if (robotRef.current && !menuOpen) {
+          const rect = robotRef.current.getBoundingClientRect()
+          const coreCenterX = rect.left + 28
+          const coreCenterY = rect.top + 28
+          const dx = e.clientX - coreCenterX
+          const dy = e.clientY - coreCenterY
+          const angle = Math.atan2(dy, dx)
+          // 降低最大偏移量（由 4.5 降低为 3.5），使跟随更加克制灵敏
+          const distance = Math.min(3.5, Math.hypot(dx, dy) / 25)
+          setCoreOffset({
+            x: Math.cos(angle) * distance,
+            y: Math.sin(angle) * distance,
+          })
+        }
+        if (dragRef.current.isDragging) {
+          dragRef.current.hasMoved = true
+          let newX = dragRef.current.elemX + (e.clientX - dragRef.current.startX)
+          let newY = dragRef.current.elemY + (e.clientY - dragRef.current.startY)
+          newX = Math.max(10, Math.min(window.innerWidth - 66, newX))
+          newY = Math.max(20, Math.min(window.innerHeight - 76, newY))
+          setPosition({ x: newX, y: newY })
+        }
+      });
     }
 
     const handlePointerUp = () => {
@@ -252,7 +262,7 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
           <div className={`absolute inset-[3px] ${currentSkin.bg || 'bg-white dark:bg-zinc-900'} rounded-[13px] z-10 transition-colors duration-500 ${isLoading ? 'bg-transparent dark:bg-transparent' : ''}`} />
 
           <div 
-            className={`relative z-20 flex gap-1.5 transition-transform duration-300 ${isLoading ? 'scale-150' : ''}`}
+            className={`relative z-20 flex gap-1.5 transition-transform ${isLoading ? 'duration-300 scale-150' : 'duration-75 ease-out'}`}
             style={isLoading ? { transform: 'translate(0px, 0px)' } : { transform: `translate(${coreOffset.x}px, ${coreOffset.y}px)` }}
           >
             <div className={`w-3.5 h-3.5 rounded-full bg-gradient-to-tr ${currentSkin.eye1} flex items-center justify-center transition-[transform,box-shadow,background-image] duration-500 ${isLoading ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.8)]' : `shadow-[0_0_8px_${currentSkin.glow}] group-hover:scale-125`}`}>
