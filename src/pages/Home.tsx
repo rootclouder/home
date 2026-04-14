@@ -17,6 +17,7 @@ interface ExtendedSetting {
   avatarUrl?: string | null
   heroBgUrl?: string | null
   heroBgOpacity?: number
+  faviconUrl?: string | null
 }
 
 export default function Home() {
@@ -111,8 +112,12 @@ export default function Home() {
         {/* Navigation */}
         <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="font-bold text-xl tracking-tight" style={{ color: 'var(--primary)' }}>
-            {settings.siteTitle}
+          <Link to="/" className="flex items-center transition-transform hover:scale-105">
+            <img 
+              src={settings?.faviconUrl || '/favicon.svg'} 
+              alt="Site Logo" 
+              className="w-8 h-8 rounded-lg object-cover shadow-sm bg-white"
+            />
           </Link>
           <div className="flex items-center space-x-6 text-sm font-medium">
             <Link to="/" className="hover:text-[var(--primary)] transition-colors">首页</Link>

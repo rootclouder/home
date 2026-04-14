@@ -14,6 +14,7 @@ interface ExtendedSetting {
   blogBgUrl?: string | null
   blogBgOpacity?: number
   blogSubtitle?: string
+  faviconUrl?: string | null
 }
 
 export default function Articles() {
@@ -183,15 +184,13 @@ export default function Articles() {
         <nav className="sticky top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
           <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <div className="flex items-center">
-              <Link to="/" className="text-zinc-500 hover:text-[var(--primary)] mr-4 transition-colors">
-                <ArrowLeft className="w-5 h-5" />
+              <Link to="/" className="flex items-center transition-transform hover:scale-105">
+                <img 
+                  src={settings?.faviconUrl || '/favicon.svg'} 
+                  alt="Site Logo" 
+                  className="w-8 h-8 rounded-lg object-cover shadow-sm bg-white"
+                />
               </Link>
-              <div 
-                className={`font-bold text-xl tracking-tight ${settings.themeColor?.includes('gradient') ? 'text-primary-gradient' : ''}`} 
-                style={settings.themeColor?.includes('gradient') ? {} : { color: 'var(--primary)' }}
-              >
-                {settings.siteTitle} <span className="text-zinc-400 dark:text-zinc-600 font-normal ml-2">/ 博客</span>
-              </div>
             </div>
             <div className="flex items-center space-x-6 text-sm font-medium">
               <Link to="/" className="hover:text-[var(--primary)] transition-colors">首页</Link>
