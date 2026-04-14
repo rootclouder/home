@@ -12,7 +12,6 @@ const SKINS = [
     eye1: 'from-cyan-400 to-purple-500',
     eye2: 'from-purple-500 to-pink-500',
     glow: 'rgba(168,85,247,0.4)',
-    accessory: null
   },
   {
     id: 'cyber',
@@ -22,7 +21,6 @@ const SKINS = [
     eye1: 'from-cyan-400 to-blue-500', // 撞色设计：红黄色外框配蓝色眼睛
     eye2: 'from-blue-500 to-cyan-400',
     glow: 'rgba(239,68,68,0.6)',
-    accessory: 'sunglasses'
   },
   {
     id: 'ocean',
@@ -32,7 +30,6 @@ const SKINS = [
     eye1: 'from-amber-300 to-orange-500', // 撞色设计：蓝色外框配橙色眼睛
     eye2: 'from-orange-500 to-amber-300',
     glow: 'rgba(59,130,246,0.6)',
-    accessory: 'snorkel'
   },
   {
     id: 'forest',
@@ -42,7 +39,6 @@ const SKINS = [
     eye1: 'from-rose-400 to-red-500', // 撞色设计：绿色外框配红色眼睛
     eye2: 'from-red-500 to-rose-400',
     glow: 'rgba(16,185,129,0.6)',
-    accessory: 'leaf'
   },
   {
     id: 'sunset',
@@ -52,7 +48,6 @@ const SKINS = [
     eye1: 'from-teal-400 to-emerald-500', // 撞色设计：橙色外框配青色眼睛
     eye2: 'from-emerald-500 to-teal-400',
     glow: 'rgba(245,158,11,0.6)',
-    accessory: null
   },
   {
     id: 'monochrome',
@@ -62,7 +57,6 @@ const SKINS = [
     eye1: 'from-zinc-800 to-black dark:from-white dark:to-zinc-200', // 极简对比
     eye2: 'from-black to-zinc-800 dark:from-zinc-200 dark:to-white',
     glow: 'rgba(113,113,122,0.5)',
-    accessory: 'tie'
   },
   {
     id: 'neon',
@@ -72,7 +66,6 @@ const SKINS = [
     eye1: 'from-lime-400 to-green-500', // 撞色设计：紫色外框配荧光绿眼睛
     eye2: 'from-green-500 to-lime-400',
     glow: 'rgba(217,70,239,0.6)',
-    accessory: 'crown'
   },
   {
     id: 'gold',
@@ -82,7 +75,6 @@ const SKINS = [
     eye1: 'from-indigo-400 to-blue-600', // 撞色设计：金色外框配深蓝色眼睛
     eye2: 'from-blue-600 to-indigo-400',
     glow: 'rgba(250,204,21,0.6)',
-    accessory: 'star'
   }
 ]
 
@@ -269,36 +261,6 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
             <div className={`w-3.5 h-3.5 rounded-full bg-gradient-to-tr ${currentSkin.eye2} flex items-center justify-center transition-[transform,box-shadow,background-image] duration-500 ${isLoading ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.8)]' : `shadow-[0_0_8px_${currentSkin.glow}] group-hover:scale-125`}`}>
               <div className={`w-1 h-1 bg-white rounded-full shadow-[0_0_4px_rgba(255,255,255,1)] transition-transform duration-300 ${isLoading ? 'scale-[2.2] shadow-[0_0_8px_rgba(255,255,255,1)]' : ''}`} />
             </div>
-            
-            {/* Accessories */}
-            {currentSkin.accessory === 'sunglasses' && (
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] w-11 h-4 bg-zinc-950/95 border border-zinc-700/50 rounded-sm flex justify-between px-1 shadow-lg z-30 pointer-events-none overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-50" />
-                <div className="w-4 h-full border-b border-zinc-700"></div>
-                <div className="w-4 h-full border-b border-zinc-700"></div>
-              </div>
-            )}
-            {currentSkin.accessory === 'snorkel' && (
-              <div className="absolute -top-3 -right-2 w-2 h-6 border-2 border-blue-400 rounded-t-full rounded-bl-full z-30 pointer-events-none transform rotate-12"></div>
-            )}
-            {currentSkin.accessory === 'leaf' && (
-              <svg className="absolute -top-4 left-1/2 -translate-x-1/2 w-4 h-4 text-emerald-500 z-30 pointer-events-none" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C7.5 2 4 6 4 10.5c0 3.3 2 6.2 5 7.4V22h2v-4.1c1-.3 1.9-.8 2.7-1.4L18 22l1.4-1.4-4.2-5.4c1.8-1.5 3-3.8 3-6.2C18.2 5 15.6 2 12 2zm0 13c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z"/>
-              </svg>
-            )}
-            {currentSkin.accessory === 'tie' && (
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[8px] border-l-transparent border-r-transparent border-t-zinc-800 z-30 pointer-events-none"></div>
-            )}
-            {currentSkin.accessory === 'crown' && (
-              <svg className="absolute -top-4 left-1/2 -translate-x-1/2 w-5 h-5 text-yellow-400 z-30 pointer-events-none drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
-              </svg>
-            )}
-            {currentSkin.accessory === 'star' && (
-              <svg className="absolute -top-3 -right-2 w-4 h-4 text-yellow-500 z-30 pointer-events-none animate-[spin_4s_linear_infinite]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2l2.4 7.4L22 9.8l-5.8 5.3 1.6 7.4-6.8-3.8-6.8 3.8 1.6-7.4L0 9.8l7.6-.4L12 2z"/>
-              </svg>
-            )}
           </div>
         </div>
       </button>
