@@ -7,47 +7,47 @@ export default function AdminLayout() {
   const location = useLocation()
 
   if (!token) {
-    return <Navigate to="/admin/login" />
+    return <Navigate to="/console-center/login" />
   }
 
   const navGroups = [
     {
       title: '',
       items: [
-        { name: '仪表盘', path: '/admin', icon: LayoutDashboard },
+        { name: '仪表盘', path: '/console-center', icon: LayoutDashboard },
       ]
     },
     {
       title: '首页',
       items: [
-        { name: '基础设置', path: '/admin/settings', icon: Settings },
-        { name: '页面设置', path: '/admin/settings?tab=home-page', icon: ImageIcon },
-        { name: '技能矩阵', path: '/admin/skill-matrix', icon: LayoutGrid },
-        { name: '工作经历', path: '/admin/work-experiences', icon: Briefcase },
-        { name: '项目经历', path: '/admin/project-experiences', icon: FolderKanban },
+        { name: '基础设置', path: '/console-center/settings', icon: Settings },
+        { name: '页面设置', path: '/console-center/settings?tab=home-page', icon: ImageIcon },
+        { name: '技能矩阵', path: '/console-center/skill-matrix', icon: LayoutGrid },
+        { name: '工作经历', path: '/console-center/work-experiences', icon: Briefcase },
+        { name: '项目经历', path: '/console-center/project-experiences', icon: FolderKanban },
       ]
     },
     {
       title: '作品集',
       items: [
-        { name: '页面设置', path: '/admin/settings?tab=portfolio-page', icon: ImageIcon },
-        { name: '作品管理', path: '/admin/projects', icon: FolderKanban },
+        { name: '页面设置', path: '/console-center/settings?tab=portfolio-page', icon: ImageIcon },
+        { name: '作品管理', path: '/console-center/projects', icon: FolderKanban },
       ]
     },
     {
       title: '博客',
       items: [
-        { name: '页面设置', path: '/admin/settings?tab=blog-page', icon: ImageIcon },
-        { name: '栏目管理', path: '/admin/categories', icon: ListTree },
-        { name: '内容发布', path: '/admin/posts', icon: FileText },
+        { name: '页面设置', path: '/console-center/settings?tab=blog-page', icon: ImageIcon },
+        { name: '栏目管理', path: '/console-center/categories', icon: ListTree },
+        { name: '内容发布', path: '/console-center/posts', icon: FileText },
       ]
     }
   ]
 
   const isActive = (itemPath: string) => {
-    if (itemPath === '/admin') return location.pathname === '/admin'
-    if (itemPath === '/admin/settings') {
-      return location.pathname === '/admin/settings' && (!location.search || location.search === '?tab=basic')
+    if (itemPath === '/console-center') return location.pathname === '/console-center'
+    if (itemPath === '/console-center/settings') {
+      return location.pathname === '/console-center/settings' && (!location.search || location.search === '?tab=basic')
     }
     return location.pathname + location.search === itemPath
   }

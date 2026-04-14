@@ -1,15 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useStore } from '../../store'
 
-export default function Login() {
+export default function FakeLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const setToken = useStore(state => state.setToken)
-  const navigate = useNavigate()
-  
+
   const [settings, setSettings] = useState<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -19,52 +15,36 @@ export default function Login() {
       .then(data => {
         if (data) setSettings(data)
       })
-      .catch(err => console.error('Failed to load settings', err))
+      .catch(() => {})
       .finally(() => setIsLoaded(true))
   }, [])
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setToken(data.token)
-        navigate('/console-center')
-      } else {
-        setError(data.error)
-      }
-    } catch (err) {
-      setError('登录失败')
-    }
-    setLoading(false)
+    setTimeout(() => {
+      setError('账号或密码错误')
+      setLoading(false)
+    }, 450)
   }
 
   if (!isLoaded) return <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950" />
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 pixel-font">
-      {/* Background Wallpaper without heavy masks */}
       {settings?.heroBgUrl && (
-        <div 
+        <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
+          style={{
             backgroundImage: `url(${settings.heroBgUrl})`,
             opacity: settings.heroBgOpacity ?? 1
           }}
         />
       )}
 
-      {/* Minimalist Login Card */}
       <div className="relative z-10 w-full max-w-md p-6">
         <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl p-8 sm:p-10">
-          
           <div className="mb-8 text-center">
             <h2 className="text-3xl text-zinc-900 dark:text-white tracking-wider">
               后台管理
@@ -122,3 +102,4 @@ export default function Login() {
     </div>
   )
 }
+

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import Home from './pages/Home'
@@ -5,6 +6,7 @@ import ProjectsPage from './pages/Projects'
 import Articles from './pages/Articles'
 import AdminLayout from './components/AdminLayout'
 import Login from './pages/admin/Login'
+import FakeLogin from './pages/admin/FakeLogin'
 import Dashboard from './pages/admin/Dashboard'
 import Settings from './pages/admin/Settings'
 import Projects from './pages/admin/Projects'
@@ -38,11 +40,11 @@ function AnimatedRoutes() {
         <Route path="/projects" element={<PageTransition><ProjectsPage /></PageTransition>} />
         <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
       
-        {/* Admin Routes */}
-        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin" element={<PageTransition><FakeLogin /></PageTransition>} />
+        <Route path="/admin/*" element={<PageTransition><FakeLogin /></PageTransition>} />
 
-        {/* Admin Dashboard */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/console-center/login" element={<Login />} />
+        <Route path="/console-center" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="settings" element={<Settings />} />
           <Route path="projects" element={<Projects />} />
@@ -58,6 +60,25 @@ function AnimatedRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(data => {
+        if (data?.siteTitle) document.title = data.siteTitle
+        const href = data?.faviconUrl || '/favicon.svg'
+        const existing = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null
+        if (existing) {
+          existing.href = href
+        } else {
+          const link = document.createElement('link')
+          link.rel = 'icon'
+          link.href = href
+          document.head.appendChild(link)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <BrowserRouter>
       <AnimatedRoutes />

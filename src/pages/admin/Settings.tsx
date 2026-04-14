@@ -173,6 +173,28 @@ export default function Settings() {
                       </div>
                     </div>
                   </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">网站 ICO</label>
+                    <div className="flex items-center space-x-6">
+                      {settings.faviconUrl ? (
+                        <div className="relative group">
+                          <img src={settings.faviconUrl} alt="Favicon" className="h-14 w-14 rounded-2xl object-cover ring-4 ring-white dark:ring-zinc-800 shadow-md bg-white" />
+                        </div>
+                      ) : (
+                        <div className="h-14 w-14 rounded-2xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 ring-4 ring-white dark:ring-zinc-900 shadow-sm">
+                          无
+                        </div>
+                      )}
+                      <div className="flex-1 max-w-md">
+                        <input type="file" accept="image/*,.ico" onChange={e => handleUpload(e, 'faviconUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                        {uploadProgress['faviconUrl'] !== undefined && (
+                          <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                            <div className="bg-[var(--primary)] h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['faviconUrl']}%` }}></div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </section>
 

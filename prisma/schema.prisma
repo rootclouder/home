@@ -23,6 +23,7 @@ model Setting {
   projectsSubtitle String @default("这里展示了我近期参与开发或主导的核心项目，涵盖前端交互、全栈开发与用户体验设计。")
   blogSubtitle String @default("AIGC 实践心得、开发经验、技术探索笔记")
   avatarUrl    String?
+  faviconUrl   String?
   heroBgUrl    String?
   heroBgOpacity Float   @default(1.0)
   projectsBgUrl String?

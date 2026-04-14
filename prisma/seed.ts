@@ -39,6 +39,7 @@ async function main() {
         heroTitle: '你好，我是独立开发者',
         heroSubtitle: '探索未知，创造可能',
         themeColor: '#000000',
+        faviconUrl: '/favicon.svg',
       },
     })
     console.log('Default settings created.')
