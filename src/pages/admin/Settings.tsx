@@ -175,23 +175,50 @@ export default function Settings() {
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">网站 ICO</label>
-                    <div className="flex items-center space-x-6">
-                      {settings.faviconUrl ? (
-                        <div className="relative group">
-                          <img src={settings.faviconUrl} alt="Favicon" className="h-14 w-14 rounded-2xl object-cover ring-4 ring-white dark:ring-zinc-800 shadow-md bg-white" />
-                        </div>
-                      ) : (
-                        <div className="h-14 w-14 rounded-2xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 ring-4 ring-white dark:ring-zinc-900 shadow-sm">
-                          无
-                        </div>
-                      )}
-                      <div className="flex-1 max-w-md">
-                        <input type="file" accept="image/*,.ico" onChange={e => handleUpload(e, 'faviconUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
-                        {uploadProgress['faviconUrl'] !== undefined && (
-                          <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
-                            <div className="bg-[var(--primary)] h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['faviconUrl']}%` }}></div>
+                    <div className="flex flex-col space-y-6">
+                      <div className="flex items-center space-x-6">
+                        {settings.faviconUrl ? (
+                          <div className="relative group">
+                            <img src={settings.faviconUrl} alt="Favicon" className="h-14 w-14 rounded-2xl object-cover ring-4 ring-white dark:ring-zinc-800 shadow-md bg-white" />
+                          </div>
+                        ) : (
+                          <div className="h-14 w-14 rounded-2xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 ring-4 ring-white dark:ring-zinc-900 shadow-sm">
+                            无
                           </div>
                         )}
+                        <div className="flex-1 max-w-md">
+                          <input type="file" accept="image/*,.ico" onChange={e => handleUpload(e, 'faviconUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                          {uploadProgress['faviconUrl'] !== undefined && (
+                            <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                              <div className="bg-[var(--primary)] h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['faviconUrl']}%` }}></div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="pt-4 border-t border-zinc-200/50 dark:border-zinc-700/50">
+                        <label className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-3">或使用系统生成的预设图标：</label>
+                        <div className="flex space-x-4">
+                          {[
+                            { name: '赛博科技风', url: '/icons/logo-tech-dark.svg' },
+                            { name: '极简线框风', url: '/icons/logo-minimal-light.svg' },
+                            { name: '3D 立体风', url: '/icons/logo-isometric.svg' }
+                          ].map((icon) => (
+                            <button
+                              key={icon.url}
+                              type="button"
+                              onClick={() => setSettings({ ...settings, faviconUrl: icon.url })}
+                              className={`group flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all duration-300 ${
+                                settings.faviconUrl === icon.url
+                                  ? 'border-[var(--primary)] bg-white dark:bg-zinc-900 shadow-md scale-[1.02]'
+                                  : 'border-transparent bg-zinc-100/50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:scale-[1.02]'
+                              }`}
+                            >
+                              <img src={icon.url} alt={icon.name} className="h-10 w-10 mb-2 rounded-xl bg-white shadow-sm transform group-hover:scale-105 transition-transform" />
+                              <span className={`text-[10px] font-semibold ${settings.faviconUrl === icon.url ? 'text-[var(--primary)]' : 'text-zinc-500 dark:text-zinc-400'}`}>{icon.name}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
