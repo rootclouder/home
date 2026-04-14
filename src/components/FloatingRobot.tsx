@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, forwardRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Settings, Palette, ChevronLeft, Check } from 'lucide-react'
@@ -7,6 +7,7 @@ const SKINS = [
   {
     id: 'default',
     name: '幻彩默认',
+    bg: 'bg-white/90 dark:bg-zinc-900/90',
     ring: 'from-cyan-400 via-purple-500 to-pink-500',
     eye1: 'from-cyan-400 to-purple-500',
     eye2: 'from-purple-500 to-pink-500',
@@ -16,74 +17,90 @@ const SKINS = [
   {
     id: 'cyber',
     name: '赛博朋克',
+    bg: 'bg-zinc-900/95 dark:bg-black/95',
     ring: 'from-yellow-400 via-red-500 to-pink-500',
-    eye1: 'from-yellow-400 to-red-500',
-    eye2: 'from-red-500 to-pink-500',
-    glow: 'rgba(239,68,68,0.4)',
+    eye1: 'from-cyan-400 to-blue-500', // 撞色设计：红黄色外框配蓝色眼睛
+    eye2: 'from-blue-500 to-cyan-400',
+    glow: 'rgba(239,68,68,0.6)',
     accessory: 'sunglasses'
   },
   {
     id: 'ocean',
     name: '深海幽蓝',
+    bg: 'bg-blue-950/90 dark:bg-slate-950/95',
     ring: 'from-blue-400 via-indigo-500 to-cyan-400',
-    eye1: 'from-blue-400 to-indigo-500',
-    eye2: 'from-indigo-500 to-cyan-400',
-    glow: 'rgba(59,130,246,0.4)',
+    eye1: 'from-amber-300 to-orange-500', // 撞色设计：蓝色外框配橙色眼睛
+    eye2: 'from-orange-500 to-amber-300',
+    glow: 'rgba(59,130,246,0.6)',
     accessory: 'snorkel'
   },
   {
     id: 'forest',
     name: '森之精灵',
+    bg: 'bg-emerald-950/90 dark:bg-green-950/95',
     ring: 'from-green-400 via-emerald-500 to-teal-400',
-    eye1: 'from-green-400 to-emerald-500',
-    eye2: 'from-emerald-500 to-teal-400',
-    glow: 'rgba(16,185,129,0.4)',
+    eye1: 'from-rose-400 to-red-500', // 撞色设计：绿色外框配红色眼睛
+    eye2: 'from-red-500 to-rose-400',
+    glow: 'rgba(16,185,129,0.6)',
     accessory: 'leaf'
   },
   {
     id: 'sunset',
     name: '落日余晖',
+    bg: 'bg-orange-50/90 dark:bg-orange-950/90',
     ring: 'from-orange-400 via-amber-500 to-red-400',
-    eye1: 'from-orange-400 to-amber-500',
-    eye2: 'from-amber-500 to-red-400',
-    glow: 'rgba(245,158,11,0.4)',
+    eye1: 'from-teal-400 to-emerald-500', // 撞色设计：橙色外框配青色眼睛
+    eye2: 'from-emerald-500 to-teal-400',
+    glow: 'rgba(245,158,11,0.6)',
     accessory: null
   },
   {
     id: 'monochrome',
     name: '极简黑白',
-    ring: 'from-zinc-300 via-zinc-500 to-zinc-700',
-    eye1: 'from-zinc-300 to-zinc-500',
-    eye2: 'from-zinc-500 to-zinc-700',
-    glow: 'rgba(113,113,122,0.4)',
+    bg: 'bg-zinc-100/95 dark:bg-zinc-800/95',
+    ring: 'from-zinc-400 via-zinc-600 to-zinc-800',
+    eye1: 'from-zinc-800 to-black dark:from-white dark:to-zinc-200', // 极简对比
+    eye2: 'from-black to-zinc-800 dark:from-zinc-200 dark:to-white',
+    glow: 'rgba(113,113,122,0.5)',
     accessory: 'tie'
   },
   {
     id: 'neon',
     name: '霓虹闪烁',
+    bg: 'bg-fuchsia-950/90 dark:bg-purple-950/95',
     ring: 'from-fuchsia-400 via-purple-500 to-violet-400',
-    eye1: 'from-fuchsia-400 to-purple-500',
-    eye2: 'from-purple-500 to-violet-400',
-    glow: 'rgba(217,70,239,0.4)',
+    eye1: 'from-lime-400 to-green-500', // 撞色设计：紫色外框配荧光绿眼睛
+    eye2: 'from-green-500 to-lime-400',
+    glow: 'rgba(217,70,239,0.6)',
     accessory: 'crown'
   },
   {
     id: 'gold',
     name: '流金岁月',
+    bg: 'bg-amber-950/90 dark:bg-yellow-950/95',
     ring: 'from-yellow-200 via-yellow-400 to-yellow-600',
-    eye1: 'from-yellow-200 to-yellow-400',
-    eye2: 'from-yellow-400 to-yellow-600',
-    glow: 'rgba(250,204,21,0.4)',
+    eye1: 'from-indigo-400 to-blue-600', // 撞色设计：金色外框配深蓝色眼睛
+    eye2: 'from-blue-600 to-indigo-400',
+    glow: 'rgba(250,204,21,0.6)',
     accessory: 'star'
   }
 ]
 
-export default function FloatingRobot() {
+const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [coreOffset, setCoreOffset] = useState({ x: 0, y: 0 })
   const dragRef = useRef({ startX: 0, startY: 0, elemX: 0, elemY: 0, isDragging: false, hasMoved: false })
-  const robotRef = useRef<HTMLDivElement>(null)
+  const robotRef = useRef<HTMLDivElement | null>(null)
+
+  const setCombinedRef = (node: HTMLDivElement) => {
+    robotRef.current = node;
+    if (typeof externalRef === 'function') {
+      externalRef(node);
+    } else if (externalRef) {
+      externalRef.current = node;
+    }
+  };
   const menuRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const [mounted, setMounted] = useState(false)
@@ -212,7 +229,7 @@ export default function FloatingRobot() {
 
   return (
     <div
-      ref={robotRef}
+      ref={setCombinedRef}
       style={{
         position: 'fixed',
         left: position.x,
@@ -230,34 +247,35 @@ export default function FloatingRobot() {
         className={`cursor-pointer transition-transform duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] rounded-2xl ${isDragging ? 'scale-95' : 'hover:scale-110'} ${isLoading ? 'scale-75' : ''} group relative z-10`}
       >
         <div 
-          className={`relative w-14 h-14 rounded-2xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl shadow-xl border border-zinc-200/50 dark:border-zinc-700/50 flex items-center justify-center overflow-hidden transition-[box-shadow,transform] duration-500`}
+          className={`relative w-14 h-14 rounded-2xl ${currentSkin.bg || 'bg-white/90 dark:bg-zinc-900/90'} backdrop-blur-xl shadow-xl border border-zinc-200/50 dark:border-zinc-700/50 flex items-center justify-center overflow-hidden transition-[box-shadow,transform,background-color] duration-500`}
           style={{ boxShadow: isLoading ? `0 0 40px ${currentSkin.glow}` : menuOpen ? `0 0 20px ${currentSkin.glow}` : '' }}
         >
           
-          <div className={`absolute inset-0 bg-gradient-to-tr ${currentSkin.ring} transition-opacity duration-500 ${isLoading || menuOpen ? 'opacity-50' : 'opacity-10 group-hover:opacity-20'}`} />
+          <div className={`absolute inset-0 bg-gradient-to-tr ${currentSkin.ring} transition-[opacity,background-image] duration-500 ${isLoading || menuOpen ? 'opacity-50' : 'opacity-10 group-hover:opacity-20'}`} />
           
           <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${isLoading || menuOpen ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}>
-            <div className={`w-24 h-24 bg-gradient-to-tr ${currentSkin.ring} ${isLoading ? 'animate-[spin_0.5s_linear_infinite]' : 'animate-[spin_3s_linear_infinite]'}`} />
+            <div className={`w-24 h-24 bg-gradient-to-tr ${currentSkin.ring} ${isLoading ? 'animate-[spin_0.5s_linear_infinite]' : 'animate-[spin_3s_linear_infinite]'} transition-[background-image] duration-500`} />
           </div>
 
-          <div className={`absolute inset-[3px] bg-white dark:bg-zinc-900 rounded-[13px] z-10 transition-colors duration-500 ${isLoading ? 'bg-transparent dark:bg-transparent' : ''}`} />
+          <div className={`absolute inset-[3px] ${currentSkin.bg || 'bg-white dark:bg-zinc-900'} rounded-[13px] z-10 transition-colors duration-500 ${isLoading ? 'bg-transparent dark:bg-transparent' : ''}`} />
 
           <div 
             className={`relative z-20 flex gap-1.5 transition-transform duration-300 ${isLoading ? 'scale-150' : ''}`}
             style={isLoading ? { transform: 'translate(0px, 0px)' } : { transform: `translate(${coreOffset.x}px, ${coreOffset.y}px)` }}
           >
-            <div className={`w-3.5 h-3.5 rounded-full bg-gradient-to-tr ${currentSkin.eye1} flex items-center justify-center transition-[transform,box-shadow] duration-300 ${isLoading ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.8)]' : `shadow-[0_0_8px_${currentSkin.glow}] group-hover:scale-125`}`}>
+            <div className={`w-3.5 h-3.5 rounded-full bg-gradient-to-tr ${currentSkin.eye1} flex items-center justify-center transition-[transform,box-shadow,background-image] duration-500 ${isLoading ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.8)]' : `shadow-[0_0_8px_${currentSkin.glow}] group-hover:scale-125`}`}>
               <div className={`w-1 h-1 bg-white rounded-full shadow-[0_0_4px_rgba(255,255,255,1)] transition-transform duration-300 ${isLoading ? 'scale-[2.2] shadow-[0_0_8px_rgba(255,255,255,1)]' : ''}`} />
             </div>
-            <div className={`w-3.5 h-3.5 rounded-full bg-gradient-to-tr ${currentSkin.eye2} flex items-center justify-center transition-[transform,box-shadow] duration-300 ${isLoading ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.8)]' : `shadow-[0_0_8px_${currentSkin.glow}] group-hover:scale-125`}`}>
+            <div className={`w-3.5 h-3.5 rounded-full bg-gradient-to-tr ${currentSkin.eye2} flex items-center justify-center transition-[transform,box-shadow,background-image] duration-500 ${isLoading ? 'scale-110 shadow-[0_0_20px_rgba(255,255,255,0.8)]' : `shadow-[0_0_8px_${currentSkin.glow}] group-hover:scale-125`}`}>
               <div className={`w-1 h-1 bg-white rounded-full shadow-[0_0_4px_rgba(255,255,255,1)] transition-transform duration-300 ${isLoading ? 'scale-[2.2] shadow-[0_0_8px_rgba(255,255,255,1)]' : ''}`} />
             </div>
             
             {/* Accessories */}
             {currentSkin.accessory === 'sunglasses' && (
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-3 bg-black/80 rounded-sm flex justify-between px-1 backdrop-blur-sm z-30 pointer-events-none">
-                <div className="w-3 h-full border-b border-zinc-700"></div>
-                <div className="w-3 h-full border-b border-zinc-700"></div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] w-11 h-4 bg-zinc-950/95 border border-zinc-700/50 rounded-sm flex justify-between px-1 shadow-lg z-30 pointer-events-none overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-50" />
+                <div className="w-4 h-full border-b border-zinc-700"></div>
+                <div className="w-4 h-full border-b border-zinc-700"></div>
               </div>
             )}
             {currentSkin.accessory === 'snorkel' && (
@@ -391,4 +409,6 @@ export default function FloatingRobot() {
       </AnimatePresence>
     </div>
   )
-}
+})
+
+export default FloatingRobot
