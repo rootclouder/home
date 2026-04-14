@@ -126,7 +126,7 @@ export default function Projects() {
                       width={800}
                       height={600}
                       loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 mix-blend-overlay opacity-90 group-hover:opacity-100 group-hover:mix-blend-normal"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-zinc-400 font-medium">Image Not Available</div>
