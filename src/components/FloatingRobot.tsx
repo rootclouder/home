@@ -251,6 +251,9 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
   const orbitTail = menuOpen ? 26 : isHovering ? 22 : 18
   const orbitDuration = menuOpen ? 5.2 : isHovering ? 2.6 : 3.6
   const orbitOpacity = menuOpen ? 1 : isHovering ? 0.95 : 0.85
+  const ringOuter = orbitRadius + (menuOpen ? 16 : isHovering ? 14 : 12)
+  const ringInner = orbitRadius - (menuOpen ? 4 : isHovering ? 5 : 6)
+  const ringBlur = menuOpen ? 12 : isHovering ? 10 : 9
 
   return (
     <div
@@ -274,6 +277,74 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
         className={`cursor-pointer transition-transform duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] rounded-2xl ${isDragging ? 'scale-95' : 'hover:scale-110'} ${isLoading ? 'scale-75' : ''} group relative z-10`}
       >
         <div className="absolute -inset-5 pointer-events-none">
+          <motion.div
+            className="absolute inset-0"
+            animate={shouldReduceMotion ? { rotate: 0 } : { rotate: 360 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: orbitDuration * 2.2, ease: 'linear' }}
+            style={{
+              opacity: menuOpen ? 0.95 : isHovering ? 0.85 : 0.65,
+              filter: `blur(${ringBlur}px)`,
+              mixBlendMode: 'screen',
+              WebkitMaskImage: `radial-gradient(circle, transparent ${ringInner}px, #000 ${ringInner + 1}px, #000 ${ringOuter}px, transparent ${ringOuter + 1}px)`,
+              maskImage: `radial-gradient(circle, transparent ${ringInner}px, #000 ${ringInner + 1}px, #000 ${ringOuter}px, transparent ${ringOuter + 1}px)`,
+              backgroundImage: `conic-gradient(from 0deg,
+                transparent 0deg,
+                ${currentSkin.orbit1} 24deg,
+                transparent 60deg,
+                ${currentSkin.orbit2} 128deg,
+                transparent 170deg,
+                ${currentSkin.orbit1} 232deg,
+                transparent 290deg,
+                ${currentSkin.orbit2} 334deg,
+                transparent 360deg)`,
+            }}
+          />
+
+          <motion.div
+            className="absolute inset-0"
+            animate={shouldReduceMotion ? { rotate: 0 } : { rotate: -360 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: orbitDuration * 1.35, ease: 'linear' }}
+            style={{
+              opacity: menuOpen ? 0.45 : isHovering ? 0.35 : 0.25,
+              filter: `blur(${Math.max(4, ringBlur - 5)}px)`,
+              mixBlendMode: 'screen',
+              WebkitMaskImage: `radial-gradient(circle, transparent ${ringInner + 6}px, #000 ${ringInner + 7}px, #000 ${ringOuter - 4}px, transparent ${ringOuter - 3}px)`,
+              maskImage: `radial-gradient(circle, transparent ${ringInner + 6}px, #000 ${ringInner + 7}px, #000 ${ringOuter - 4}px, transparent ${ringOuter - 3}px)`,
+              backgroundImage: `conic-gradient(from 40deg,
+                transparent 0deg,
+                rgba(255,255,255,0.65) 18deg,
+                transparent 48deg,
+                rgba(255,255,255,0.15) 90deg,
+                transparent 140deg,
+                rgba(255,255,255,0.55) 210deg,
+                transparent 260deg,
+                rgba(255,255,255,0.18) 310deg,
+                transparent 360deg)`,
+            }}
+          />
+
+          <motion.div
+            className="absolute inset-0"
+            initial={false}
+            animate={
+              shouldReduceMotion
+                ? { opacity: 0 }
+                : menuOpen
+                  ? { opacity: 0.55, scale: 1.05 }
+                  : isHovering
+                    ? { opacity: 0.38, scale: 1.02 }
+                    : { opacity: 0.22, scale: 1 }
+            }
+            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 220, damping: 26 }}
+            style={{
+              backgroundImage: `radial-gradient(circle at 50% 50%,
+                ${currentSkin.orbit1} 0%,
+                transparent 52%)`,
+              filter: `blur(${Math.max(8, ringBlur + 4)}px)`,
+              mixBlendMode: 'screen',
+            }}
+          />
+
           <motion.div
             className="absolute inset-0"
             animate={shouldReduceMotion ? { rotate: 0 } : { rotate: 360 }}
