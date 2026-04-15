@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, forwardRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Settings, Palette, ChevronLeft, Check } from 'lucide-react'
 
 const SKINS = [
@@ -12,6 +12,8 @@ const SKINS = [
     eye1: 'from-cyan-400 to-purple-500',
     eye2: 'from-purple-500 to-pink-500',
     glow: 'rgba(168,85,247,0.4)',
+    orbit1: 'rgba(34,211,238,0.95)',
+    orbit2: 'rgba(251,113,133,0.95)',
   },
   {
     id: 'cyber',
@@ -21,6 +23,8 @@ const SKINS = [
     eye1: 'from-cyan-400 to-blue-500', // 撞色设计：红黄色外框配蓝色眼睛
     eye2: 'from-blue-500 to-cyan-400',
     glow: 'rgba(239,68,68,0.6)',
+    orbit1: 'rgba(34,211,238,0.95)',
+    orbit2: 'rgba(167,139,250,0.95)',
   },
   {
     id: 'ocean',
@@ -30,6 +34,8 @@ const SKINS = [
     eye1: 'from-amber-300 to-orange-500', // 撞色设计：蓝色外框配橙色眼睛
     eye2: 'from-orange-500 to-amber-300',
     glow: 'rgba(59,130,246,0.6)',
+    orbit1: 'rgba(249,115,22,0.95)',
+    orbit2: 'rgba(244,114,182,0.95)',
   },
   {
     id: 'forest',
@@ -39,6 +45,8 @@ const SKINS = [
     eye1: 'from-rose-400 to-red-500', // 撞色设计：绿色外框配红色眼睛
     eye2: 'from-red-500 to-rose-400',
     glow: 'rgba(16,185,129,0.6)',
+    orbit1: 'rgba(251,113,133,0.95)',
+    orbit2: 'rgba(96,165,250,0.95)',
   },
   {
     id: 'sunset',
@@ -48,6 +56,8 @@ const SKINS = [
     eye1: 'from-teal-400 to-emerald-500', // 撞色设计：橙色外框配青色眼睛
     eye2: 'from-emerald-500 to-teal-400',
     glow: 'rgba(245,158,11,0.6)',
+    orbit1: 'rgba(14,165,233,0.95)',
+    orbit2: 'rgba(167,139,250,0.95)',
   },
   {
     id: 'monochrome',
@@ -57,6 +67,8 @@ const SKINS = [
     eye1: 'from-zinc-800 to-black dark:from-white dark:to-zinc-200', // 极简对比
     eye2: 'from-black to-zinc-800 dark:from-zinc-200 dark:to-white',
     glow: 'rgba(113,113,122,0.5)',
+    orbit1: 'rgba(255,255,255,0.95)',
+    orbit2: 'rgba(14,165,233,0.95)',
   },
   {
     id: 'neon',
@@ -66,6 +78,8 @@ const SKINS = [
     eye1: 'from-lime-400 to-green-500', // 撞色设计：紫色外框配荧光绿眼睛
     eye2: 'from-green-500 to-lime-400',
     glow: 'rgba(217,70,239,0.6)',
+    orbit1: 'rgba(250,204,21,0.95)',
+    orbit2: 'rgba(34,197,94,0.95)',
   },
   {
     id: 'gold',
@@ -75,6 +89,8 @@ const SKINS = [
     eye1: 'from-indigo-400 to-blue-600', // 撞色设计：金色外框配深蓝色眼睛
     eye2: 'from-blue-600 to-indigo-400',
     glow: 'rgba(250,204,21,0.6)',
+    orbit1: 'rgba(236,72,153,0.95)',
+    orbit2: 'rgba(59,130,246,0.95)',
   }
 ]
 
@@ -97,9 +113,11 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
   const navigate = useNavigate()
   const [mounted, setMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isHovering, setIsHovering] = useState(false)
   
   const [menuOpen, setMenuOpen] = useState(false)
   const [menuView, setMenuView] = useState<'main' | 'skins'>('main')
+  const shouldReduceMotion = useReducedMotion()
   
   const [skinId, setSkinId] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -228,6 +246,11 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
 
   const isBottomHalf = position.y > window.innerHeight / 2
   const isRightHalf = position.x > window.innerWidth / 2
+  const orbitRadius = menuOpen ? 40 : isHovering ? 38 : 34
+  const orbitDot = menuOpen ? 9 : isHovering ? 8 : 7
+  const orbitTail = menuOpen ? 26 : isHovering ? 22 : 18
+  const orbitDuration = menuOpen ? 5.2 : isHovering ? 2.6 : 3.6
+  const orbitOpacity = menuOpen ? 1 : isHovering ? 0.95 : 0.85
 
   return (
     <div
@@ -245,9 +268,96 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
         type="button"
         onPointerDown={handlePointerDown}
         onClick={handleClick}
+        onPointerEnter={() => setIsHovering(true)}
+        onPointerLeave={() => setIsHovering(false)}
         aria-label="小机器人"
         className={`cursor-pointer transition-transform duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] rounded-2xl ${isDragging ? 'scale-95' : 'hover:scale-110'} ${isLoading ? 'scale-75' : ''} group relative z-10`}
       >
+        <div className="absolute -inset-5 pointer-events-none">
+          <motion.div
+            className="absolute inset-0"
+            animate={shouldReduceMotion ? { rotate: 0 } : { rotate: 360 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: orbitDuration, ease: 'linear' }}
+            style={{ opacity: orbitOpacity }}
+          >
+            <div
+              className="absolute left-1/2 top-1/2"
+              style={{ transform: `translate(-50%, -50%) translateY(-${orbitRadius}px)` }}
+            >
+              <div className="relative flex items-center">
+                <div
+                  className="rounded-full blur-[0.2px]"
+                  style={{
+                    width: orbitTail,
+                    height: Math.max(3, Math.round(orbitDot * 0.55)),
+                    background: `linear-gradient(to right, transparent, ${currentSkin.orbit1})`,
+                    filter: 'blur(0.4px)',
+                    opacity: 0.95,
+                  }}
+                />
+                <div
+                  className="rounded-full"
+                  style={{
+                    width: orbitDot,
+                    height: orbitDot,
+                    background: currentSkin.orbit1,
+                    boxShadow: `0 0 16px ${currentSkin.orbit1}, 0 0 40px ${currentSkin.glow}`,
+                  }}
+                />
+              </div>
+            </div>
+
+            <div
+              className="absolute left-1/2 top-1/2"
+              style={{ transform: `translate(-50%, -50%) translateY(${orbitRadius}px)` }}
+            >
+              <div className="relative flex items-center">
+                <div
+                  className="rounded-full"
+                  style={{
+                    width: orbitDot,
+                    height: orbitDot,
+                    background: currentSkin.orbit2,
+                    boxShadow: `0 0 16px ${currentSkin.orbit2}, 0 0 40px ${currentSkin.glow}`,
+                  }}
+                />
+                <div
+                  className="rounded-full"
+                  style={{
+                    width: orbitTail,
+                    height: Math.max(3, Math.round(orbitDot * 0.55)),
+                    background: `linear-gradient(to left, transparent, ${currentSkin.orbit2})`,
+                    filter: 'blur(0.4px)',
+                    opacity: 0.95,
+                  }}
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="absolute inset-0"
+            animate={shouldReduceMotion ? { rotate: 0 } : { rotate: -360 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: orbitDuration * 1.15, ease: 'linear' }}
+            style={{ opacity: orbitOpacity * 0.55 }}
+          >
+            <div
+              className="absolute left-1/2 top-1/2"
+              style={{ transform: `translate(-50%, -50%) translateX(-${orbitRadius}px)` }}
+            >
+              <div
+                className="rounded-full"
+                style={{
+                  width: Math.max(4, orbitDot - 2),
+                  height: Math.max(4, orbitDot - 2),
+                  background: currentSkin.orbit2,
+                  boxShadow: `0 0 18px ${currentSkin.orbit2}`,
+                }}
+              />
+            </div>
+          </motion.div>
+        </div>
+
         <div 
           className={`relative w-14 h-14 rounded-2xl ${currentSkin.bg || 'bg-white/90 dark:bg-zinc-900/90'} backdrop-blur-xl shadow-xl border border-zinc-200/50 dark:border-zinc-700/50 flex items-center justify-center overflow-hidden transition-[box-shadow,transform,background-color] duration-500`}
           style={{ boxShadow: isLoading ? `0 0 40px ${currentSkin.glow}` : menuOpen ? `0 0 20px ${currentSkin.glow}` : '' }}
@@ -311,11 +421,11 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
                     >
                       <div className="flex items-center gap-3">
                         <div className={`p-1.5 rounded-lg bg-gradient-to-tr ${currentSkin.ring} text-white shadow-sm`}>
-                          <Palette className="w-4 h-4" />
+                          <Palette className="w-4 h-4" aria-hidden="true" />
                         </div>
                         更换皮肤
                       </div>
-                      <ChevronLeft className="w-4 h-4 text-zinc-400 rotate-180 group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronLeft className="w-4 h-4 text-zinc-400 rotate-180 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                     </button>
                     
                     <div className="h-[1px] bg-zinc-100 dark:bg-zinc-800 my-1 mx-2" />
@@ -325,7 +435,7 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
                       className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-sm font-medium text-zinc-700 dark:text-zinc-200"
                     >
                       <div className="p-1.5 rounded-lg bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
-                        <Settings className="w-4 h-4" />
+                        <Settings className="w-4 h-4" aria-hidden="true" />
                       </div>
                       后台管理
                     </button>
@@ -342,9 +452,10 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
                     <div className="flex items-center gap-2 p-3 border-b border-zinc-100 dark:border-zinc-800">
                       <button
                         onClick={(e) => { e.stopPropagation(); setMenuView('main') }}
+                        aria-label="返回"
                         className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-500"
                       >
-                        <ChevronLeft className="w-4 h-4" />
+                        <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                       </button>
                       <span className="text-sm font-bold text-zinc-800 dark:text-zinc-100">选择皮肤</span>
                     </div>
@@ -356,6 +467,7 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
                             e.stopPropagation()
                             setSkinId(skin.id)
                           }}
+                          aria-label={`选择皮肤：${skin.name}`}
                           className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                             skinId === skin.id 
                               ? 'border-[var(--primary)] scale-110 shadow-md z-10' 
@@ -366,7 +478,7 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
                           <div className={`absolute inset-0 bg-gradient-to-tr ${skin.ring} opacity-80`} />
                           {skinId === skin.id && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                              <Check className="w-4 h-4 text-white drop-shadow-md" />
+                              <Check className="w-4 h-4 text-white drop-shadow-md" aria-hidden="true" />
                             </div>
                           )}
                         </button>
