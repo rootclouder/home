@@ -204,11 +204,17 @@ const FloatingRobot = forwardRef<HTMLDivElement, FloatingRobotProps>((props, ext
           {/* 底层微弱的光晕 */}
           <div className={`absolute inset-0 bg-gradient-to-tr ${currentSkin.ring} transition-[opacity,background-image] duration-500 ${menuOpen ? 'opacity-20' : 'opacity-10 group-hover:opacity-20'}`} />
           
-          {/* 动态旋转流光束（利用 conic-gradient 和皮肤的 gradient-stops 实现彗星扫尾效果） */}
+          {/* 动态旋转流光束（利用两个 conic-gradient 相差 180 度实现“双光点+长拖尾”的太极/双星环绕效果） */}
           <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${menuOpen ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}>
+            {/* 光束 1 */}
             <div 
-              className={`absolute w-[250%] h-[250%] ${currentSkin.ring} animate-[spin_3s_linear_infinite] transition-[background-image] duration-500`} 
-              style={{ background: 'conic-gradient(from 0deg, transparent 20%, var(--tw-gradient-stops), transparent 80%)' }}
+              className={`absolute w-[250%] h-[250%] ${currentSkin.ring} animate-[spin_4s_linear_infinite] transition-[background-image] duration-500`} 
+              style={{ background: 'conic-gradient(from 0deg, transparent 0%, transparent 35%, var(--tw-gradient-stops) 50%, transparent 50%)' }}
+            />
+            {/* 光束 2 (延迟或相差 180 度) */}
+            <div 
+              className={`absolute w-[250%] h-[250%] ${currentSkin.ring} animate-[spin_4s_linear_infinite] transition-[background-image] duration-500`} 
+              style={{ background: 'conic-gradient(from 180deg, transparent 0%, transparent 35%, var(--tw-gradient-stops) 50%, transparent 50%)' }}
             />
           </div>
 
