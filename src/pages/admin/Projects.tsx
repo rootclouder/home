@@ -95,7 +95,7 @@ export default function Projects() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">项目管理</h1>
-        <button onClick={() => setEditing({ title: '', description: '', projectUrl: '', isVisible: true })} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors">
+        <button onClick={() => setEditing({ title: '', description: '', projectUrl: '', thumbnailUrl: '', coverUrl: '', tags: '', order: 0, isVisible: true })} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors">
           添加项目
         </button>
       </div>
@@ -104,8 +104,14 @@ export default function Projects() {
         {projects.map(p => (
           <div key={p.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm flex flex-col">
             {p.thumbnailUrl || p.coverUrl ? <img src={p.thumbnailUrl || p.coverUrl} className="h-40 w-full object-cover" /> : <div className="h-40 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">无图片</div>}
-            <div className="p-5 flex-1 flex flex-col">
-              <h3 className="font-semibold text-lg text-zinc-900 dark:text-white mb-1">{p.title}</h3>
+            <div className="p-5 flex-1 flex flex-col relative">
+              {!p.isVisible && (
+                <div className="absolute top-4 right-4 bg-zinc-800/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md font-medium flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 mr-1.5"></span>
+                  已隐藏
+                </div>
+              )}
+              <h3 className="font-semibold text-lg text-zinc-900 dark:text-white mb-1 pr-16">{p.title}</h3>
               <p className="text-zinc-500 dark:text-zinc-400 text-sm line-clamp-2 mb-4 flex-1">{p.description}</p>
               <div className="flex space-x-2 mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
                 <button onClick={() => setEditing(p)} className="text-blue-600 hover:text-blue-800 text-sm font-medium px-2 py-1 bg-blue-50 hover:bg-blue-100 rounded">编辑</button>
@@ -165,6 +171,23 @@ export default function Projects() {
                     )}
                   </div>
                 </div>
+              </div>
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditing({ ...editing, isVisible: !editing.isVisible })}
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 ${editing.isVisible ? 'bg-[var(--primary)]' : 'bg-zinc-200 dark:bg-zinc-700'}`}
+                  role="switch"
+                  aria-checked={editing.isVisible}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${editing.isVisible ? 'translate-x-5' : 'translate-x-0'}`}
+                  />
+                </button>
+                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  {editing.isVisible ? '公开展示此作品' : '已隐藏（前台不可见）'}
+                </span>
               </div>
             </div>
             <div className="mt-8 flex justify-end space-x-3">

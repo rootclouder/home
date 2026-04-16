@@ -111,7 +111,7 @@ export default function Projects() {
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {projects.map((p, index) => (
+            {projects.filter(p => p.isVisible !== false).map((p, index) => (
               <motion.a
                 key={p.id}
                 href={p.projectUrl}
