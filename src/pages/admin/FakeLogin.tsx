@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { resolveMediaUrl } from '../../lib/utils'
 
 export default function FakeLogin() {
   const [username, setUsername] = useState('')
@@ -34,13 +35,25 @@ export default function FakeLogin() {
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 pixel-font">
       {settings?.heroBgUrl && (
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${settings.heroBgUrl})`,
-            opacity: settings.heroBgOpacity ?? 1
-          }}
-        />
+        settings.heroBgUrl.match(/\.(mp4|webm)$/i) ? (
+          <video
+            src={resolveMediaUrl(settings.heroBgUrl)}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover z-0"
+            style={{ opacity: settings.heroBgOpacity ?? 1 }}
+          />
+        ) : (
+          <div
+            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${resolveMediaUrl(settings.heroBgUrl)})`,
+              opacity: settings.heroBgOpacity ?? 1
+            }}
+          />
+        )
       )}
 
       <div className="relative z-10 w-full max-w-md p-6">
@@ -102,4 +115,3 @@ export default function FakeLogin() {
     </div>
   )
 }
-

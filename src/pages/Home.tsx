@@ -6,6 +6,7 @@ import FloatingRobot from '../components/FloatingRobot'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import type { Project, Post, Category, WorkExperience, ProjectExperience } from '@prisma/client'
+import { resolveMediaUrl } from '../lib/utils'
 
 interface ExtendedSetting {
   siteTitle: string
@@ -92,13 +93,25 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-[var(--primary)] selection:text-white">
       {settings.heroBgUrl && (
-        <div 
-          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
-          style={{ 
-            backgroundImage: `url(${settings.heroBgUrl})`,
-            opacity: settings.heroBgOpacity ?? 1
-          }}
-        />
+        settings.heroBgUrl.match(/\.(mp4|webm)$/i) ? (
+          <video
+            src={resolveMediaUrl(settings.heroBgUrl)}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
+            style={{ opacity: settings.heroBgOpacity ?? 1 }}
+          />
+        ) : (
+          <div 
+            className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+            style={{ 
+              backgroundImage: `url(${resolveMediaUrl(settings.heroBgUrl)})`,
+              opacity: settings.heroBgOpacity ?? 1
+            }}
+          />
+        )
       )}
 
       <a
@@ -114,7 +127,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center transition-transform hover:scale-105">
             <img 
-              src={settings?.faviconUrl || '/favicon.svg'} 
+              src={resolveMediaUrl(settings?.faviconUrl) || '/favicon.svg'} 
               alt="Site Logo" 
               className="w-8 h-8 rounded-lg object-cover shadow-sm bg-white"
             />
@@ -189,7 +202,7 @@ export default function Home() {
                 <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-tr from-[var(--primary)] to-transparent opacity-20 group-hover:opacity-40 blur-2xl transition-opacity duration-700 animate-pulse"></div>
                 <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-tr from-[var(--primary)] to-white/10 opacity-30 group-hover:opacity-60 blur-md transition-opacity duration-700"></div>
                 <img 
-                  src={settings.avatarUrl} 
+                  src={resolveMediaUrl(settings.avatarUrl)} 
                   alt="Avatar"
                   width={384}
                   height={384}

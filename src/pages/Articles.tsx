@@ -5,6 +5,7 @@ import MDEditor from '@uiw/react-md-editor'
 import { motion, AnimatePresence } from 'framer-motion'
 import FloatingRobot from '../components/FloatingRobot'
 import Typewriter from 'typewriter-effect'
+import { resolveMediaUrl } from '../lib/utils'
 
 interface ExtendedSetting {
   siteTitle: string
@@ -167,16 +168,28 @@ export default function Articles() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-[var(--primary)] selection:text-white">
       {/* Background Wallpaper */}
       {settings?.blogBgUrl && (
-        <div 
-          className="fixed inset-0 z-0 pointer-events-none"
-          style={{
-            backgroundImage: `url(${settings.blogBgUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            opacity: settings.blogBgOpacity ?? 1
-          }}
-        />
+        settings.blogBgUrl.match(/\.(mp4|webm)$/i) ? (
+          <video
+            src={resolveMediaUrl(settings.blogBgUrl)}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
+            style={{ opacity: settings.blogBgOpacity ?? 1 }}
+          />
+        ) : (
+          <div 
+            className="fixed inset-0 z-0 pointer-events-none"
+            style={{
+              backgroundImage: `url(${resolveMediaUrl(settings.blogBgUrl)})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundAttachment: 'fixed',
+              opacity: settings.blogBgOpacity ?? 1
+            }}
+          />
+        )
       )}
       
       <div className="relative z-10">
@@ -186,7 +199,7 @@ export default function Articles() {
             <div className="flex items-center">
               <Link to="/" className="flex items-center transition-transform hover:scale-105">
                 <img 
-                  src={settings?.faviconUrl || '/favicon.svg'} 
+                    src={resolveMediaUrl(settings?.faviconUrl) || '/favicon.svg'}
                   alt="Site Logo" 
                   className="w-8 h-8 rounded-lg object-cover shadow-sm bg-white"
                 />

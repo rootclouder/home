@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import type { Project } from '@prisma/client'
 import FloatingRobot from '../components/FloatingRobot'
 import Typewriter from 'typewriter-effect'
+import { resolveMediaUrl } from '../lib/utils'
 
 // Extending Project to match the data we fetch
 interface ExtendedProject extends Project {
@@ -50,16 +51,28 @@ export default function Projects() {
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white selection:bg-[var(--primary)] selection:text-white">
       {/* Background Wallpaper */}
       {settings?.projectsBgUrl && (
-        <div 
-          className="fixed inset-0 z-0 pointer-events-none"
-          style={{
-            backgroundImage: `url(${settings.projectsBgUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            opacity: settings.projectsBgOpacity ?? 1
-          }}
-        />
+        settings.projectsBgUrl.match(/\.(mp4|webm)$/i) ? (
+          <video
+            src={resolveMediaUrl(settings.projectsBgUrl)}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
+            style={{ opacity: settings.projectsBgOpacity ?? 1 }}
+          />
+        ) : (
+          <div 
+            className="fixed inset-0 z-0 pointer-events-none"
+            style={{
+              backgroundImage: `url(${resolveMediaUrl(settings.projectsBgUrl)})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundAttachment: 'fixed',
+              opacity: settings.projectsBgOpacity ?? 1
+            }}
+          />
+        )
       )}
 
       {/* Navigation */}
@@ -67,7 +80,7 @@ export default function Projects() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center transition-transform hover:scale-105">
             <img 
-              src={settings?.faviconUrl || '/favicon.svg'} 
+              src={resolveMediaUrl(settings?.faviconUrl) || '/favicon.svg'} 
               alt="Site Logo" 
               className="w-8 h-8 rounded-lg object-cover shadow-sm bg-white"
             />

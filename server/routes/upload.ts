@@ -11,11 +11,11 @@ const _dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fil
 const router = express.Router()
 
 // 使用内存存储
-// 增加文件大小限制 10MB
+// 增加文件大小限制 50MB，以支持视频壁纸上传
 const upload = multer({ 
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024
+    fileSize: 50 * 1024 * 1024
   }
 })
 

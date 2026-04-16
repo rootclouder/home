@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../../store'
+import { resolveMediaUrl } from '../../lib/utils'
 
 export default function Login() {
   const [username, setUsername] = useState('')
@@ -52,13 +53,25 @@ export default function Login() {
     <div className="relative min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 pixel-font">
       {/* Background Wallpaper without heavy masks */}
       {settings?.heroBgUrl && (
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
-            backgroundImage: `url(${settings.heroBgUrl})`,
-            opacity: settings.heroBgOpacity ?? 1
-          }}
-        />
+        settings.heroBgUrl.match(/\.(mp4|webm)$/i) ? (
+          <video
+            src={resolveMediaUrl(settings.heroBgUrl)}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover z-0"
+            style={{ opacity: settings.heroBgOpacity ?? 1 }}
+          />
+        ) : (
+          <div 
+            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+            style={{ 
+              backgroundImage: `url(${resolveMediaUrl(settings.heroBgUrl)})`,
+              opacity: settings.heroBgOpacity ?? 1
+            }}
+          />
+        )
       )}
 
       {/* Minimalist Login Card */}

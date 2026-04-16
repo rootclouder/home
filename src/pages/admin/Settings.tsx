@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useStore } from '../../store'
+import { resolveMediaUrl } from '../../lib/utils'
 
 export default function Settings() {
   const { token } = useStore()
@@ -56,9 +57,9 @@ export default function Settings() {
     if (!e.target.files?.[0]) return
     const file = e.target.files[0]
     
-    // Check file size (client side)
-    if (file.size > 10 * 1024 * 1024) {
-      setMessage('图片不能超过10MB')
+    // Check file size (client side) - 50MB
+    if (file.size > 50 * 1024 * 1024) {
+      setMessage('文件不能超过50MB')
       return
     }
 
@@ -156,7 +157,7 @@ export default function Settings() {
                     <div className="flex items-center space-x-6">
                       {settings.avatarUrl ? (
                         <div className="relative group">
-                          <img src={settings.avatarUrl} alt="Avatar" className="h-20 w-20 rounded-full object-cover ring-4 ring-white dark:ring-zinc-800 shadow-lg" />
+                          <img src={resolveMediaUrl(settings.avatarUrl)} alt="Avatar" className="h-20 w-20 rounded-full object-cover ring-4 ring-white dark:ring-zinc-800 shadow-lg" />
                         </div>
                       ) : (
                         <div className="h-20 w-20 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 ring-4 ring-white dark:ring-zinc-900 shadow-sm">
@@ -179,7 +180,7 @@ export default function Settings() {
                       <div className="flex items-center space-x-6">
                         {settings.faviconUrl ? (
                           <div className="relative group">
-                            <img src={settings.faviconUrl} alt="Favicon" className="h-14 w-14 rounded-2xl object-cover ring-4 ring-white dark:ring-zinc-800 shadow-md bg-white" />
+                            <img src={resolveMediaUrl(settings.faviconUrl)} alt="Favicon" className="h-14 w-14 rounded-2xl object-cover ring-4 ring-white dark:ring-zinc-800 shadow-md bg-white" />
                           </div>
                         ) : (
                           <div className="h-14 w-14 rounded-2xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 ring-4 ring-white dark:ring-zinc-900 shadow-sm">
@@ -214,7 +215,7 @@ export default function Settings() {
                                   : 'border-transparent bg-zinc-100/50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:scale-[1.02]'
                               }`}
                             >
-                              <img src={icon.url} alt={icon.name} className="h-10 w-10 mb-2 rounded-xl bg-white shadow-sm transform group-hover:scale-105 transition-transform" />
+                              <img src={resolveMediaUrl(icon.url)} alt={icon.name} className="h-10 w-10 mb-2 rounded-xl bg-white shadow-sm transform group-hover:scale-105 transition-transform" />
                               <span className={`text-[10px] font-semibold ${settings.faviconUrl === icon.url ? 'text-[var(--primary)]' : 'text-zinc-500 dark:text-zinc-400'}`}>{icon.name}</span>
                             </button>
                           ))}
@@ -296,15 +297,19 @@ export default function Settings() {
                   视觉氛围
                 </h3>
                 <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">Hero 背景壁纸 (图片或动态 GIF)</label>
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">Hero 背景壁纸 (图片、GIF 或 MP4)</label>
                   <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
                     {settings.heroBgUrl ? (
-                      <img src={settings.heroBgUrl} alt="Hero BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      settings.heroBgUrl.match(/\.(mp4|webm)$/i) ? (
+                        <video src={resolveMediaUrl(settings.heroBgUrl)} autoPlay loop muted playsInline className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      ) : (
+                        <img src={resolveMediaUrl(settings.heroBgUrl)} alt="Hero BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      )
                     ) : (
                       <div className="h-24 w-40 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 text-sm border border-dashed border-zinc-300 dark:border-zinc-700">无背景</div>
                     )}
                     <div className="flex-1 max-w-md">
-                      <input type="file" accept="image/*" onChange={e => handleUpload(e, 'heroBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                      <input type="file" accept="image/*,video/mp4,video/webm" onChange={e => handleUpload(e, 'heroBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
                       {uploadProgress['heroBgUrl'] !== undefined && (
                         <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
                           <div className="bg-blue-500 h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['heroBgUrl']}%` }}></div>
@@ -358,15 +363,19 @@ export default function Settings() {
                   视觉氛围
                 </h3>
                 <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">作品集背景壁纸</label>
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">作品集背景壁纸 (图片、GIF 或 MP4)</label>
                   <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
                     {settings.projectsBgUrl ? (
-                      <img src={settings.projectsBgUrl} alt="Projects BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      settings.projectsBgUrl.match(/\.(mp4|webm)$/i) ? (
+                        <video src={resolveMediaUrl(settings.projectsBgUrl)} autoPlay loop muted playsInline className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      ) : (
+                        <img src={resolveMediaUrl(settings.projectsBgUrl)} alt="Projects BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      )
                     ) : (
                       <div className="h-24 w-40 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 text-sm border border-dashed border-zinc-300 dark:border-zinc-700">无背景</div>
                     )}
                     <div className="flex-1 max-w-md">
-                      <input type="file" accept="image/*" onChange={e => handleUpload(e, 'projectsBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                      <input type="file" accept="image/*,video/mp4,video/webm" onChange={e => handleUpload(e, 'projectsBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
                       {uploadProgress['projectsBgUrl'] !== undefined && (
                         <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
                           <div className="bg-emerald-500 h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['projectsBgUrl']}%` }}></div>
@@ -420,15 +429,19 @@ export default function Settings() {
                   视觉氛围
                 </h3>
                 <div className="bg-zinc-50/50 dark:bg-zinc-800/20 p-6 md:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">博客背景壁纸</label>
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4">博客背景壁纸 (图片、GIF 或 MP4)</label>
                   <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
                     {settings.blogBgUrl ? (
-                      <img src={settings.blogBgUrl} alt="Blog BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      settings.blogBgUrl.match(/\.(mp4|webm)$/i) ? (
+                        <video src={resolveMediaUrl(settings.blogBgUrl)} autoPlay loop muted playsInline className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      ) : (
+                        <img src={resolveMediaUrl(settings.blogBgUrl)} alt="Blog BG" className="h-24 w-40 rounded-2xl object-cover shadow-md border border-zinc-200 dark:border-zinc-700" />
+                      )
                     ) : (
                       <div className="h-24 w-40 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 text-sm border border-dashed border-zinc-300 dark:border-zinc-700">无背景</div>
                     )}
                     <div className="flex-1 max-w-md">
-                      <input type="file" accept="image/*" onChange={e => handleUpload(e, 'blogBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
+                      <input type="file" accept="image/*,video/mp4,video/webm" onChange={e => handleUpload(e, 'blogBgUrl')} className="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 dark:file:bg-zinc-800 file:text-zinc-700 dark:file:text-zinc-300 hover:file:bg-zinc-200 dark:hover:file:bg-zinc-700 transition-colors cursor-pointer" />
                       {uploadProgress['blogBgUrl'] !== undefined && (
                         <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
                           <div className="bg-orange-500 h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress['blogBgUrl']}%` }}></div>

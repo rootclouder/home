@@ -19,6 +19,7 @@ import uploadRoutes from './routes/upload.js'
 import workExperiencesRoutes from './routes/work-experiences.js'
 import projectExperiencesRoutes from './routes/project-experiences.js'
 import skillMatrixRoutes from './routes/skill-matrix.js'
+import mediaRoutes from './routes/media.js'
 
 // fallback for CommonJS or ESM
 const _dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
@@ -41,6 +42,7 @@ app.use('/api/projects', projectsRoutes)
 app.use('/api/categories', categoriesRoutes)
 app.use('/api/posts', postsRoutes)
 app.use('/api/upload', uploadRoutes)
+app.use('/api/media', mediaRoutes)
 app.use('/api/work-experiences', workExperiencesRoutes)
 app.use('/api/project-experiences', projectExperiencesRoutes)
 app.use('/api/skill-matrix', skillMatrixRoutes)

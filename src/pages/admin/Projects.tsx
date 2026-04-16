@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useStore } from '../../store'
 import { useNavigate } from 'react-router-dom'
+import { resolveMediaUrl } from '../../lib/utils'
 
 export default function Projects() {
   const navigate = useNavigate()
@@ -182,7 +183,7 @@ export default function Projects() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map(p => (
           <div key={p.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm flex flex-col">
-            {p.thumbnailUrl || p.coverUrl ? <img src={p.thumbnailUrl || p.coverUrl} className="h-40 w-full object-cover" /> : <div className="h-40 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">无图片</div>}
+            {p.thumbnailUrl || p.coverUrl ? <img src={resolveMediaUrl(p.thumbnailUrl || p.coverUrl)} alt={p.title} className="h-40 w-full object-cover" /> : <div className="h-40 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">无图片</div>}
             <div className="p-5 flex-1 flex flex-col relative">
               <div className="absolute top-4 right-4 flex items-center gap-2">
                 <span className={`text-xs font-semibold ${p.isVisible ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-500 dark:text-zinc-400'}`}>
@@ -235,7 +236,7 @@ export default function Projects() {
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">封面大图</label>
                 <div className="flex items-center space-x-4">
                   <div className="h-16 w-24 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700 flex-shrink-0">
-                    {editing.coverUrl ? <img src={editing.coverUrl} className="h-full w-full object-cover" /> : <span className="h-full w-full flex items-center justify-center text-zinc-400 text-xs">无</span>}
+                    {editing.coverUrl ? <img src={resolveMediaUrl(editing.coverUrl)} alt="Cover" className="h-full w-full object-cover" /> : <span className="h-full w-full flex items-center justify-center text-zinc-400 text-xs">无</span>}
                   </div>
                   <div className="flex-1">
                     <input type="file" accept="image/*" onChange={e => handleUpload(e, 'coverUrl')} className="block w-full text-sm text-zinc-500 dark:text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-50 file:text-zinc-700 hover:file:bg-zinc-100 dark:file:bg-zinc-800 dark:file:text-zinc-300 dark:hover:file:bg-zinc-700 transition-colors" />
@@ -251,7 +252,7 @@ export default function Projects() {
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">缩略图 (用于列表展示)</label>
                 <div className="flex items-center space-x-4">
                   <div className="h-16 w-16 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden border border-zinc-200 dark:border-zinc-700 flex-shrink-0">
-                    {editing.thumbnailUrl ? <img src={editing.thumbnailUrl} className="h-full w-full object-cover" /> : <span className="h-full w-full flex items-center justify-center text-zinc-400 text-xs">无</span>}
+                    {editing.thumbnailUrl ? <img src={resolveMediaUrl(editing.thumbnailUrl)} alt="Thumbnail" className="h-full w-full object-cover" /> : <span className="h-full w-full flex items-center justify-center text-zinc-400 text-xs">无</span>}
                   </div>
                   <div className="flex-1">
                     <input type="file" accept="image/*" onChange={e => handleUpload(e, 'thumbnailUrl')} className="block w-full text-sm text-zinc-500 dark:text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-50 file:text-zinc-700 hover:file:bg-zinc-100 dark:file:bg-zinc-800 dark:file:text-zinc-300 dark:hover:file:bg-zinc-700 transition-colors" />
