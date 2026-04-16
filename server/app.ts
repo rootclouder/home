@@ -45,8 +45,8 @@ app.use('/api/work-experiences', workExperiencesRoutes)
 app.use('/api/project-experiences', projectExperiencesRoutes)
 app.use('/api/skill-matrix', skillMatrixRoutes)
 
-// Serve uploads statically (only needed for local development if not using Blob, but we use Blob now)
-// app.use('/uploads', express.static(path.join(_dirname, '../uploads')))
+// Serve uploads statically (fallback for local development without Blob)
+app.use('/uploads', express.static(path.join(_dirname, '../public/uploads')))
 
 /**
  * health
