@@ -246,14 +246,9 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
 
   const isBottomHalf = position.y > window.innerHeight / 2
   const isRightHalf = position.x > window.innerWidth / 2
-  const orbitRadius = menuOpen ? 40 : isHovering ? 38 : 34
-  const orbitDot = menuOpen ? 9 : isHovering ? 8 : 7
-  const orbitTail = menuOpen ? 26 : isHovering ? 22 : 18
-  const orbitDuration = menuOpen ? 5.2 : isHovering ? 2.6 : 3.6
-  const orbitOpacity = menuOpen ? 1 : isHovering ? 0.95 : 0.85
-  const ringOuter = orbitRadius + (menuOpen ? 16 : isHovering ? 14 : 12)
-  const ringInner = orbitRadius - (menuOpen ? 4 : isHovering ? 5 : 6)
-  const ringBlur = menuOpen ? 12 : isHovering ? 10 : 9
+  const lineDuration = menuOpen ? 1.5 : isHovering ? 2 : 3.5
+  const lineOpacity = menuOpen ? 1 : isHovering ? 0.9 : 0.5
+  const lineThickness = menuOpen ? 3 : isHovering ? 2 : 1.5
 
   return (
     <div
@@ -276,157 +271,39 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
         aria-label="小机器人"
         className={`cursor-pointer transition-transform duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] rounded-2xl ${isDragging ? 'scale-95' : 'hover:scale-110'} ${isLoading ? 'scale-75' : ''} group relative z-10`}
       >
-        <div className="absolute -inset-5 pointer-events-none">
-          <motion.div
-            className="absolute inset-0"
-            animate={shouldReduceMotion ? { rotate: 0 } : { rotate: 360 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: orbitDuration * 2.2, ease: 'linear' }}
+        <div 
+          className="absolute pointer-events-none z-20 transition-all duration-500"
+          style={{
+            inset: `-${lineThickness}px`,
+            opacity: lineOpacity,
+            filter: `drop-shadow(0 0 6px ${currentSkin.orbit1}) drop-shadow(0 0 10px ${currentSkin.orbit2})`,
+          }}
+        >
+          <div
+            className="absolute inset-0 overflow-hidden"
             style={{
-              opacity: menuOpen ? 0.95 : isHovering ? 0.85 : 0.65,
-              filter: `blur(${ringBlur}px)`,
-              mixBlendMode: 'screen',
-              WebkitMaskImage: `radial-gradient(circle, transparent ${ringInner}px, #000 ${ringInner + 1}px, #000 ${ringOuter}px, transparent ${ringOuter + 1}px)`,
-              maskImage: `radial-gradient(circle, transparent ${ringInner}px, #000 ${ringInner + 1}px, #000 ${ringOuter}px, transparent ${ringOuter + 1}px)`,
-              backgroundImage: `conic-gradient(from 0deg,
-                transparent 0deg,
-                ${currentSkin.orbit1} 24deg,
-                transparent 60deg,
-                ${currentSkin.orbit2} 128deg,
-                transparent 170deg,
-                ${currentSkin.orbit1} 232deg,
-                transparent 290deg,
-                ${currentSkin.orbit2} 334deg,
-                transparent 360deg)`,
+              borderRadius: `${16 + lineThickness}px`,
+              padding: `${lineThickness}px`,
+              WebkitMask: 'linear-gradient(white, white) content-box, linear-gradient(white, white)',
+              WebkitMaskComposite: 'xor',
+              maskComposite: 'exclude',
             }}
-          />
-
-          <motion.div
-            className="absolute inset-0"
-            animate={shouldReduceMotion ? { rotate: 0 } : { rotate: -360 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: orbitDuration * 1.35, ease: 'linear' }}
-            style={{
-              opacity: menuOpen ? 0.45 : isHovering ? 0.35 : 0.25,
-              filter: `blur(${Math.max(4, ringBlur - 5)}px)`,
-              mixBlendMode: 'screen',
-              WebkitMaskImage: `radial-gradient(circle, transparent ${ringInner + 6}px, #000 ${ringInner + 7}px, #000 ${ringOuter - 4}px, transparent ${ringOuter - 3}px)`,
-              maskImage: `radial-gradient(circle, transparent ${ringInner + 6}px, #000 ${ringInner + 7}px, #000 ${ringOuter - 4}px, transparent ${ringOuter - 3}px)`,
-              backgroundImage: `conic-gradient(from 40deg,
-                transparent 0deg,
-                rgba(255,255,255,0.65) 18deg,
-                transparent 48deg,
-                rgba(255,255,255,0.15) 90deg,
-                transparent 140deg,
-                rgba(255,255,255,0.55) 210deg,
-                transparent 260deg,
-                rgba(255,255,255,0.18) 310deg,
-                transparent 360deg)`,
-            }}
-          />
-
-          <motion.div
-            className="absolute inset-0"
-            initial={false}
-            animate={
-              shouldReduceMotion
-                ? { opacity: 0 }
-                : menuOpen
-                  ? { opacity: 0.55, scale: 1.05 }
-                  : isHovering
-                    ? { opacity: 0.38, scale: 1.02 }
-                    : { opacity: 0.22, scale: 1 }
-            }
-            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 220, damping: 26 }}
-            style={{
-              backgroundImage: `radial-gradient(circle at 50% 50%,
-                ${currentSkin.orbit1} 0%,
-                transparent 52%)`,
-              filter: `blur(${Math.max(8, ringBlur + 4)}px)`,
-              mixBlendMode: 'screen',
-            }}
-          />
-
-          <motion.div
-            className="absolute inset-0"
-            animate={shouldReduceMotion ? { rotate: 0 } : { rotate: 360 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: orbitDuration, ease: 'linear' }}
-            style={{ opacity: orbitOpacity }}
           >
-            <div
-              className="absolute left-1/2 top-1/2"
-              style={{ transform: `translate(-50%, -50%) translateY(-${orbitRadius}px)` }}
-            >
-              <div className="relative flex items-center">
-                <div
-                  className="rounded-full blur-[0.2px]"
-                  style={{
-                    width: orbitTail,
-                    height: Math.max(3, Math.round(orbitDot * 0.55)),
-                    background: `linear-gradient(to right, transparent, ${currentSkin.orbit1})`,
-                    filter: 'blur(0.4px)',
-                    opacity: 0.95,
-                  }}
-                />
-                <div
-                  className="rounded-full"
-                  style={{
-                    width: orbitDot,
-                    height: orbitDot,
-                    background: currentSkin.orbit1,
-                    boxShadow: `0 0 16px ${currentSkin.orbit1}, 0 0 40px ${currentSkin.glow}`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <div
-              className="absolute left-1/2 top-1/2"
-              style={{ transform: `translate(-50%, -50%) translateY(${orbitRadius}px)` }}
-            >
-              <div className="relative flex items-center">
-                <div
-                  className="rounded-full"
-                  style={{
-                    width: orbitDot,
-                    height: orbitDot,
-                    background: currentSkin.orbit2,
-                    boxShadow: `0 0 16px ${currentSkin.orbit2}, 0 0 40px ${currentSkin.glow}`,
-                  }}
-                />
-                <div
-                  className="rounded-full"
-                  style={{
-                    width: orbitTail,
-                    height: Math.max(3, Math.round(orbitDot * 0.55)),
-                    background: `linear-gradient(to left, transparent, ${currentSkin.orbit2})`,
-                    filter: 'blur(0.4px)',
-                    opacity: 0.95,
-                  }}
-                />
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="absolute inset-0"
-            animate={shouldReduceMotion ? { rotate: 0 } : { rotate: -360 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: orbitDuration * 1.15, ease: 'linear' }}
-            style={{ opacity: orbitOpacity * 0.55 }}
-          >
-            <div
-              className="absolute left-1/2 top-1/2"
-              style={{ transform: `translate(-50%, -50%) translateX(-${orbitRadius}px)` }}
-            >
-              <div
-                className="rounded-full"
-                style={{
-                  width: Math.max(4, orbitDot - 2),
-                  height: Math.max(4, orbitDot - 2),
-                  background: currentSkin.orbit2,
-                  boxShadow: `0 0 18px ${currentSkin.orbit2}`,
-                }}
-              />
-            </div>
-          </motion.div>
+            <motion.div
+              className="absolute inset-[-100%]"
+              style={{
+                background: `conic-gradient(from 0deg, 
+                  transparent 0%, 
+                  transparent 15%, 
+                  ${currentSkin.orbit1} 50%, 
+                  transparent 50%, 
+                  transparent 65%, 
+                  ${currentSkin.orbit2} 100%)`
+              }}
+              animate={shouldReduceMotion ? { rotate: 0 } : { rotate: 360 }}
+              transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, duration: lineDuration, ease: 'linear' }}
+            />
+          </div>
         </div>
 
         <div 
@@ -434,13 +311,7 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
           style={{ boxShadow: isLoading ? `0 0 40px ${currentSkin.glow}` : menuOpen ? `0 0 20px ${currentSkin.glow}` : '' }}
         >
           
-          <div className={`absolute inset-0 bg-gradient-to-tr ${currentSkin.ring} transition-[opacity,background-image] duration-500 ${isLoading || menuOpen ? 'opacity-50' : 'opacity-10 group-hover:opacity-20'}`} />
-          
-          <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${isLoading || menuOpen ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}>
-            <div className={`w-24 h-24 bg-gradient-to-tr ${currentSkin.ring} ${isLoading ? 'animate-[spin_0.5s_linear_infinite]' : 'animate-[spin_3s_linear_infinite]'} transition-[background-image] duration-500`} />
-          </div>
-
-          <div className={`absolute inset-[3px] ${currentSkin.bg || 'bg-white dark:bg-zinc-900'} rounded-[13px] z-10 transition-colors duration-500 ${isLoading ? 'bg-transparent dark:bg-transparent' : ''}`} />
+          <div className={`absolute inset-0 bg-gradient-to-tr ${currentSkin.ring} opacity-10 transition-[opacity,background-image] duration-500`} />
 
           <div 
             className={`relative z-20 flex gap-1.5 transition-transform ${isLoading ? 'duration-300 scale-150' : 'duration-75 ease-out'}`}
