@@ -307,8 +307,11 @@ const FloatingRobot = forwardRef<HTMLDivElement>((props, externalRef) => {
         </div>
 
         <div 
-          className={`relative w-14 h-14 rounded-2xl ${currentSkin.bg || 'bg-white/90 dark:bg-zinc-900/90'} backdrop-blur-xl shadow-xl border border-zinc-200/50 dark:border-zinc-700/50 flex items-center justify-center overflow-hidden transition-[box-shadow,transform,background-color] duration-500`}
-          style={{ boxShadow: isLoading ? `0 0 40px ${currentSkin.glow}` : menuOpen ? `0 0 20px ${currentSkin.glow}` : '' }}
+          className={`relative w-14 h-14 rounded-2xl ${currentSkin.bg || 'bg-white/90 dark:bg-zinc-900/90'} backdrop-blur-xl shadow-xl border-2 border-zinc-300/80 dark:border-zinc-600/80 flex items-center justify-center overflow-hidden transition-[box-shadow,transform,background-color,border-color] duration-500`}
+          style={{ 
+            borderColor: isHovering || menuOpen ? currentSkin.orbit1 : undefined,
+            boxShadow: isLoading ? `0 0 40px ${currentSkin.glow}` : menuOpen ? `0 0 20px ${currentSkin.glow}` : '' 
+          }}
         >
           
           <div className={`absolute inset-0 bg-gradient-to-tr ${currentSkin.ring} opacity-10 transition-[opacity,background-image] duration-500`} />
