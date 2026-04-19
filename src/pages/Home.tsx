@@ -87,8 +87,9 @@ export default function Home() {
     )
   }
 
+  const visibleProjectExps = projectExperiences.filter(e => e.isVisible !== false)
   const activeProjectExp =
-    projectExperiences.find(p => p.id === activeProjectExpId) || projectExperiences[0] || null
+    visibleProjectExps.find(p => p.id === activeProjectExpId) || visibleProjectExps[0] || null
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-[var(--primary)] selection:text-white">
@@ -328,7 +329,7 @@ export default function Home() {
         </section>
       )}
 
-      {projectExperiences.length > 0 && (
+      {visibleProjectExps.length > 0 && (
         <section id="project-experiences" className="py-32 relative z-10 scroll-mt-24">
           <div className="max-w-6xl mx-auto px-6">
             <div className="mb-16 text-center flex flex-col items-center gap-4">
@@ -343,7 +344,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
               <div className="lg:col-span-5">
                 <div className="relative border-l border-zinc-200 dark:border-zinc-800 ml-4 space-y-10">
-                  {projectExperiences.map((exp) => {
+                  {visibleProjectExps.map((exp) => {
                     const isActive = activeProjectExpId === exp.id
                     return (
                       <button

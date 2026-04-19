@@ -72,6 +72,26 @@ export default function ProjectExperiences() {
     fetchExperiences()
   }
 
+  const handleToggleVisible = async (exp: any) => {
+    // 乐观更新
+    setExperiences(experiences.map(e => e.id === exp.id ? { ...e, isVisible: !e.isVisible } : e))
+    try {
+      const res = await fetch(`/api/project-experiences/${exp.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isVisible: !exp.isVisible }),
+      })
+      if (!res.ok) throw new Error('Failed to toggle')
+    } catch (e) {
+      console.error(e)
+      // 恢复状态
+      fetchExperiences()
+    }
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -85,6 +105,7 @@ export default function ProjectExperiences() {
               endDate: '',
               content: '',
               sortOrder: experiences.length,
+              isVisible: true,
             })
             setIsEditing(true)
           }}
@@ -103,13 +124,17 @@ export default function ProjectExperiences() {
               <th className="px-6 py-4 text-sm font-medium text-zinc-500 dark:text-zinc-400">角色 / 职责</th>
               <th className="px-6 py-4 text-sm font-medium text-zinc-500 dark:text-zinc-400">时间</th>
               <th className="px-6 py-4 text-sm font-medium text-zinc-500 dark:text-zinc-400">排序</th>
+              <th className="px-6 py-4 text-sm font-medium text-zinc-500 dark:text-zinc-400">前台显示</th>
               <th className="px-6 py-4 text-sm font-medium text-zinc-500 dark:text-zinc-400 text-right">操作</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
             {experiences.map((exp, index) => (
               <tr key={exp.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                <td className="px-6 py-4 text-zinc-900 dark:text-zinc-100 font-medium">{exp.projectName}</td>
+                <td className="px-6 py-4 text-zinc-900 dark:text-zinc-100 font-medium">
+                  {exp.projectName}
+                  {exp.isVisible === false && <span className="ml-2 text-xs font-normal text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">已隐藏</span>}
+                </td>
                 <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">{exp.role}</td>
                 <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">{exp.startDate} - {exp.endDate}</td>
                 <td className="px-6 py-4">
@@ -131,6 +156,20 @@ export default function ProjectExperiences() {
                       <ArrowDown className="w-4 h-4" />
                     </button>
                   </div>
+                </td>
+                <td className="px-6 py-4">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleVisible(exp)}
+                    className={`relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 ${exp.isVisible !== false ? 'bg-[var(--primary)]' : 'bg-zinc-200 dark:bg-zinc-700'}`}
+                    role="switch"
+                    aria-checked={exp.isVisible !== false}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${exp.isVisible !== false ? 'translate-x-5' : 'translate-x-0'}`}
+                    />
+                  </button>
                 </td>
                 <td className="px-6 py-4 text-right">
                   <button
@@ -240,6 +279,24 @@ export default function ProjectExperiences() {
                     className="border border-zinc-700 rounded-2xl overflow-hidden shadow-none"
                   />
                 </div>
+              </div>
+
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setCurrent({ ...current, isVisible: !current.isVisible })}
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 ${current.isVisible !== false ? 'bg-[var(--primary)]' : 'bg-zinc-200 dark:bg-zinc-700'}`}
+                  role="switch"
+                  aria-checked={current.isVisible !== false}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${current.isVisible !== false ? 'translate-x-5' : 'translate-x-0'}`}
+                  />
+                </button>
+                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  {current.isVisible !== false ? '前台公开展示此项目经历' : '已隐藏（前台不可见）'}
+                </span>
               </div>
 
               <div className="flex justify-end space-x-3 mt-8">
