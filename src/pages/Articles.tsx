@@ -432,19 +432,32 @@ function SubCategoryAccordion({ category, posts, expandedCategories, toggleExpan
 }
 
 function PostRow({ post, onClick }: { post: any, onClick: () => void }) {
+  const handleClick = () => {
+    if (post.externalUrl) {
+      window.open(post.externalUrl, '_blank')
+    } else {
+      onClick()
+    }
+  }
+
   return (
     <motion.button 
       layoutId={`post-${post.id}`}
-      onClick={onClick}
+      onClick={handleClick}
       className="w-full group flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl hover:bg-zinc-100/80 dark:hover:bg-zinc-800/50 transition-colors text-left gap-2"
     >
       <div className="flex items-center gap-3 overflow-hidden">
         <FileText className="w-4 h-4 text-zinc-400 group-hover:text-[var(--primary)] shrink-0 transition-colors" />
         <motion.span 
-          layoutId={`post-title-${post.id}`}
-          className="text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white truncate transition-colors font-medium"
+          layoutId={post.externalUrl ? undefined : `post-title-${post.id}`}
+          className="text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white truncate transition-colors font-medium flex items-center gap-2"
         >
           {post.title}
+          {post.externalUrl && (
+            <svg className="w-3 h-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          )}
         </motion.span>
       </div>
       <span className="text-xs text-zinc-400 shrink-0 sm:ml-4 tabular-nums font-medium tracking-wide">

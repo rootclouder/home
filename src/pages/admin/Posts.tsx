@@ -112,7 +112,7 @@ export default function Posts() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">图文发布</h1>
-        <button onClick={() => setEditing({ title: '', content: '', summary: '', thumbnailUrl: '', categoryId: categories[0]?.id || '', isFeatured: false })} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors">
+        <button onClick={() => setEditing({ title: '', content: '', summary: '', thumbnailUrl: '', externalUrl: '', categoryId: categories[0]?.id || '', isFeatured: false })} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors">
           发布图文
         </button>
       </div>
@@ -173,15 +173,19 @@ export default function Posts() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1 flex items-center justify-between">
-                    <span>文章概要</span>
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input type="checkbox" checked={editing.isFeatured || false} onChange={e => setEditing({...editing, isFeatured: e.target.checked})} className="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900" />
-                      <span className="text-xs text-zinc-600 dark:text-zinc-400">设为精选</span>
-                    </label>
-                  </label>
-                  <input type="text" required value={editing.summary || ''} onChange={e => setEditing({...editing, summary: e.target.value})} className="block w-full rounded-2xl border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 p-2.5 text-zinc-900 dark:text-white focus:ring-2 focus:ring-zinc-500 outline-none" />
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">跳转外部链接 (可选)</label>
+                  <input type="url" placeholder="如填写，点击文章将直接跳转此链接" value={editing.externalUrl || ''} onChange={e => setEditing({...editing, externalUrl: e.target.value})} className="block w-full rounded-2xl border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 p-2.5 text-zinc-900 dark:text-white focus:ring-2 focus:ring-zinc-500 outline-none" />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1 flex items-center justify-between">
+                  <span>文章概要</span>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" checked={editing.isFeatured || false} onChange={e => setEditing({...editing, isFeatured: e.target.checked})} className="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900" />
+                    <span className="text-xs text-zinc-600 dark:text-zinc-400">设为精选</span>
+                  </label>
+                </label>
+                <input type="text" required value={editing.summary || ''} onChange={e => setEditing({...editing, summary: e.target.value})} className="block w-full rounded-2xl border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 p-2.5 text-zinc-900 dark:text-white focus:ring-2 focus:ring-zinc-500 outline-none" />
               </div>
               <div onDrop={onDrop} onDragOver={e => e.preventDefault()} onDragEnter={e => e.preventDefault()} onDragLeave={e => e.preventDefault()}>
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1 flex justify-between">

@@ -67,6 +67,7 @@ model Post {
   thumbnailUrl String?
   content      String
   imageUrl     String?
+  externalUrl  String?
   isFeatured   Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
