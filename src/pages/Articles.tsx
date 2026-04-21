@@ -84,18 +84,10 @@ export default function Articles() {
     return { tree, map }
   }, [categories])
 
-  // By default expand all top-level categories
+  // By default collapse sub-categories
   useEffect(() => {
     if (categories.length > 0 && expandedCategories.size === 0) {
-      const initialExpanded = new Set<string>()
-      // We could expand everything, or just level 1.
-      // Let's expand all categories to match the aiking.dev layout (where top level folders are just sections)
-      // Actually, wait, aiking.dev has folders that don't expand, they are just section headings.
-      // But we have a dynamic tree. Let's expand everything that has children so it behaves like accordions by default, or just leave them closed. Let's leave them open if it's the first time.
-      Object.values(map).forEach((cat: any) => {
-        if (cat.children && cat.children.length > 0) initialExpanded.add(cat.id)
-      })
-      setExpandedCategories(initialExpanded)
+      setExpandedCategories(new Set())
     }
   }, [categories, map, expandedCategories.size])
 
