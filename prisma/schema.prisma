@@ -13,8 +13,27 @@ model User {
   password String
 }
 
+model Profile {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  name      String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  setting           Setting?
+  projects          Project[]
+  categories        Category[]
+  posts             Post[]
+  workExperiences   WorkExperience[]
+  projectExperiences ProjectExperience[]
+  skillMatrixItems  SkillMatrixItem[]
+}
+
 model Setting {
   id           String   @id @default(cuid())
+  profileId    String?  @unique
+  profile      Profile? @relation(fields: [profileId], references: [id])
   siteTitle    String   @default("My Portfolio")
   heroTitle    String   @default("Hello, I'm a Creator")
   heroSubtitle String   @default("Welcome to my personal space")
@@ -36,6 +55,8 @@ model Setting {
 
 model Project {
   id          String   @id @default(cuid())
+  profileId   String?
+  profile     Profile? @relation(fields: [profileId], references: [id])
   title       String
   description String?
   coverUrl    String?
@@ -45,10 +66,14 @@ model Project {
   isVisible   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([profileId, sortOrder])
 }
 
 model Category {
   id        String     @id @default(cuid())
+  profileId String?
+  profile   Profile?   @relation(fields: [profileId], references: [id])
   name      String
   parentId  String?
   parent    Category?  @relation("SubCategories", fields: [parentId], references: [id])
@@ -56,10 +81,14 @@ model Category {
   posts     Post[]
   sortOrder Int        @default(0)
   createdAt DateTime   @default(now())
+
+  @@index([profileId, sortOrder])
 }
 
 model Post {
   id           String   @id @default(cuid())
+  profileId    String?
+  profile      Profile? @relation(fields: [profileId], references: [id])
   categoryId   String
   category     Category @relation(fields: [categoryId], references: [id])
   title        String
@@ -71,10 +100,14 @@ model Post {
   isFeatured   Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([profileId, createdAt])
 }
 
 model WorkExperience {
   id          String   @id @default(cuid())
+  profileId   String?
+  profile     Profile? @relation(fields: [profileId], references: [id])
   company     String
   position    String
   startDate   String
@@ -83,10 +116,14 @@ model WorkExperience {
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([profileId, sortOrder])
 }
 
 model ProjectExperience {
   id          String   @id @default(cuid())
+  profileId   String?
+  profile     Profile? @relation(fields: [profileId], references: [id])
   projectName String
   role        String
   startDate   String
@@ -96,14 +133,20 @@ model ProjectExperience {
   isVisible   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([profileId, sortOrder])
 }
 
 model SkillMatrixItem {
   id        String   @id @default(cuid())
+  profileId String?
+  profile   Profile? @relation(fields: [profileId], references: [id])
   title     String
   content   String
   isVisible Boolean  @default(true)
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([profileId, sortOrder])
 }

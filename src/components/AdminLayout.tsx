@@ -1,17 +1,33 @@
 import { useState, useEffect } from 'react'
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Settings, FolderKanban, ListTree, FileText, LogOut, Home, Briefcase, LayoutGrid, Image as ImageIcon, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Settings, FolderKanban, ListTree, FileText, LogOut, Home, Briefcase, LayoutGrid, Image as ImageIcon, Menu, X, Users } from 'lucide-react'
 import { useStore } from '../store'
 
 export default function AdminLayout() {
-  const { token, setToken } = useStore()
+  const { token, setToken, profileKey, setProfileKey } = useStore()
   const location = useLocation()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [profiles, setProfiles] = useState<any[]>([])
 
   // 路由变化时，如果在移动端则自动收起侧边栏
   useEffect(() => {
     setIsSidebarOpen(false)
   }, [location.pathname, location.search])
+
+  useEffect(() => {
+    if (!token) return
+    fetch('/api/profiles')
+      .then(r => r.ok ? r.json() : [])
+      .then(list => {
+        const arr = Array.isArray(list) ? list : []
+        setProfiles(arr)
+        if (arr.length === 0) return
+        if (arr.some((p: any) => p.key === profileKey)) return
+        const def = arr.find((p: any) => p.isDefault) || arr[0]
+        if (def?.key) setProfileKey(def.key)
+      })
+      .catch(() => {})
+  }, [token])
 
   if (!token) {
     return <Navigate to="/console-center/login" />
@@ -22,6 +38,7 @@ export default function AdminLayout() {
       title: '',
       items: [
         { name: '仪表盘', path: '/console-center', icon: LayoutDashboard },
+        { name: 'Profiles', path: '/console-center/profiles', icon: Users },
       ]
     },
     {
@@ -84,6 +101,24 @@ export default function AdminLayout() {
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        <div className="px-4 pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Profile</span>
+            <Link to="/console-center/profiles" className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">管理</Link>
+          </div>
+          <select
+            value={profileKey}
+            onChange={(e) => setProfileKey(e.target.value)}
+            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+          >
+            {profiles.map((p: any) => (
+              <option key={p.id} value={p.key}>
+                {p.name}{p.isDefault ? '（默认）' : ''}
+              </option>
+            ))}
+          </select>
         </div>
 
         <nav className="flex-1 p-4 overflow-y-auto custom-scrollbar">

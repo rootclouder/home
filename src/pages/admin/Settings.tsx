@@ -4,7 +4,7 @@ import { useStore } from '../../store'
 import { resolveMediaUrl } from '../../lib/utils'
 
 export default function Settings() {
-  const { token } = useStore()
+  const { token, profileKey } = useStore()
   const [searchParams] = useSearchParams()
   const tab = searchParams.get('tab') || 'basic'
 
@@ -23,15 +23,15 @@ export default function Settings() {
   ]
 
   useEffect(() => {
-    fetch('/api/settings').then(r => r.json()).then(setSettings)
-  }, [])
+    fetch(`/api/settings?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.json()).then(setSettings)
+  }, [profileKey])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setMessage('')
     try {
-      const res = await fetch('/api/settings', {
+      const res = await fetch(`/api/settings?profileKey=${encodeURIComponent(profileKey)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({

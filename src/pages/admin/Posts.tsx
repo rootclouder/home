@@ -3,23 +3,21 @@ import MDEditor from '@uiw/react-md-editor'
 import { useStore } from '../../store'
 
 export default function Posts() {
-  const { token } = useStore()
+  const { token, profileKey } = useStore()
   const [posts, setPosts] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
   const [editing, setEditing] = useState<any>(null)
   
-  const fetchPosts = () => fetch('/api/posts').then(r => r.json()).then(setPosts)
-  const fetchCategories = () => fetch('/api/categories').then(r => r.json()).then(setCategories)
+  const qp = `?profileKey=${encodeURIComponent(profileKey)}`
+  const fetchPosts = () => fetch(`/api/posts${qp}`).then(r => r.json()).then(setPosts)
+  const fetchCategories = () => fetch(`/api/categories${qp}`).then(r => r.json()).then(setCategories)
   
-  useEffect(() => { 
-    fetchPosts()
-    fetchCategories()
-  }, [])
+  useEffect(() => { fetchPosts(); fetchCategories() }, [profileKey])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     const method = editing.id ? 'PUT' : 'POST'
-    const url = editing.id ? `/api/posts/${editing.id}` : '/api/posts'
+    const url = editing.id ? `/api/posts/${editing.id}${qp}` : `/api/posts${qp}`
     
     await fetch(url, {
       method,
@@ -32,7 +30,7 @@ export default function Posts() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确认删除？')) return
-    await fetch(`/api/posts/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+    await fetch(`/api/posts/${id}${qp}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
     fetchPosts()
   }
 

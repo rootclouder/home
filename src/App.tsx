@@ -15,6 +15,7 @@ import Posts from './pages/admin/Posts'
 import WorkExperiences from './pages/admin/WorkExperiences'
 import ProjectExperiences from './pages/admin/ProjectExperiences'
 import SkillMatrix from './pages/admin/SkillMatrix'
+import Profiles from './pages/admin/Profiles'
 
 const PageTransition = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -31,37 +32,15 @@ const PageTransition = ({ children }: { children: React.ReactNode }) => {
 
 function AnimatedRoutes() {
   const location = useLocation()
-  
-  return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {/* Public Home Page */}
-        <Route path="/" element={<PageTransition><Home /></PageTransition>} />
-        <Route path="/projects" element={<PageTransition><ProjectsPage /></PageTransition>} />
-        <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
-      
-        <Route path="/admin" element={<PageTransition><FakeLogin /></PageTransition>} />
-        <Route path="/admin/*" element={<PageTransition><FakeLogin /></PageTransition>} />
 
-        <Route path="/console-center/login" element={<Login />} />
-        <Route path="/console-center" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="projects" element={<Projects />} />
-          <Route path="project-experiences" element={<ProjectExperiences />} />
-          <Route path="work-experiences" element={<WorkExperiences />} />
-          <Route path="skill-matrix" element={<SkillMatrix />} />
-          <Route path="categories" element={<Categories />} />
-          <Route path="posts" element={<Posts />} />
-        </Route>
-      </Routes>
-    </AnimatePresence>
-  )
-}
-
-function App() {
   useEffect(() => {
-    fetch('/api/settings')
+    const seg = location.pathname.split('/').filter(Boolean)[0]
+    const profileKey =
+      seg && !['projects', 'articles', 'console-center', 'admin', 'api', 'uploads'].includes(seg)
+        ? seg
+        : 'default'
+
+    fetch(`/api/settings?profileKey=${encodeURIComponent(profileKey)}`)
       .then(r => r.json())
       .then(data => {
         if (data?.siteTitle) document.title = data.siteTitle
@@ -77,8 +56,40 @@ function App() {
         }
       })
       .catch(() => {})
-  }, [])
+  }, [location.pathname])
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Public Home Page */}
+        <Route path="/" element={<PageTransition><Home /></PageTransition>} />
+        <Route path="/projects" element={<PageTransition><ProjectsPage /></PageTransition>} />
+        <Route path="/articles" element={<PageTransition><Articles /></PageTransition>} />
+        <Route path="/:key" element={<PageTransition><Home /></PageTransition>} />
+        <Route path="/:key/projects" element={<PageTransition><ProjectsPage /></PageTransition>} />
+        <Route path="/:key/articles" element={<PageTransition><Articles /></PageTransition>} />
+      
+        <Route path="/admin" element={<PageTransition><FakeLogin /></PageTransition>} />
+        <Route path="/admin/*" element={<PageTransition><FakeLogin /></PageTransition>} />
 
+        <Route path="/console-center/login" element={<Login />} />
+        <Route path="/console-center" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="profiles" element={<Profiles />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="projects" element={<Projects />} />
+          <Route path="project-experiences" element={<ProjectExperiences />} />
+          <Route path="work-experiences" element={<WorkExperiences />} />
+          <Route path="skill-matrix" element={<SkillMatrix />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="posts" element={<Posts />} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  )
+}
+
+function App() {
   return (
     <BrowserRouter>
       <AnimatedRoutes />

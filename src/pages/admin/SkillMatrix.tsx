@@ -3,7 +3,8 @@ import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Eye, EyeOff, Save } from 'luc
 import { useStore } from '../../store'
 
 export default function SkillMatrix() {
-  const token = useStore(state => state.token)
+  const { token, profileKey } = useStore()
+  const qp = `?profileKey=${encodeURIComponent(profileKey)}`
   const [settings, setSettings] = useState<any>(null)
   const [items, setItems] = useState<any[]>([])
   const [isEditing, setIsEditing] = useState(false)
@@ -16,16 +17,16 @@ export default function SkillMatrix() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/settings').then(r => r.ok ? r.json() : null),
-      fetch('/api/skill-matrix').then(r => r.ok ? r.json() : []),
+      fetch(`/api/settings${qp}`).then(r => r.ok ? r.json() : null),
+      fetch(`/api/skill-matrix${qp}`).then(r => r.ok ? r.json() : []),
     ]).then(([s, list]) => {
       setSettings(s)
       setItems(list || [])
     })
-  }, [])
+  }, [profileKey])
 
   const fetchItems = async () => {
-    const res = await fetch('/api/skill-matrix')
+    const res = await fetch(`/api/skill-matrix${qp}`)
     if (!res.ok) return
     setItems(await res.json())
   }
@@ -33,7 +34,7 @@ export default function SkillMatrix() {
   const handleSaveTitle = async () => {
     if (!settings?.id) return
     setSavingTitle(true)
-    await fetch('/api/settings', {
+    await fetch(`/api/settings${qp}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(settings),
@@ -44,7 +45,7 @@ export default function SkillMatrix() {
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault()
     const method = currentItem.id ? 'PUT' : 'POST'
-    const url = currentItem.id ? `/api/skill-matrix/${currentItem.id}` : '/api/skill-matrix'
+    const url = currentItem.id ? `/api/skill-matrix/${currentItem.id}${qp}` : `/api/skill-matrix${qp}`
 
     await fetch(url, {
       method,
@@ -59,7 +60,7 @@ export default function SkillMatrix() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除这个技能卡片吗？')) return
-    await fetch(`/api/skill-matrix/${id}`, {
+    await fetch(`/api/skill-matrix/${id}${qp}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -67,7 +68,7 @@ export default function SkillMatrix() {
   }
 
   const handleToggleVisible = async (item: any) => {
-    await fetch(`/api/skill-matrix/${item.id}`, {
+    await fetch(`/api/skill-matrix/${item.id}${qp}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ isVisible: !item.isVisible }),
@@ -86,7 +87,7 @@ export default function SkillMatrix() {
     newItems[targetIndex] = temp
 
     await Promise.all(newItems.map((it, i) =>
-      fetch(`/api/skill-matrix/${it.id}`, {
+      fetch(`/api/skill-matrix/${it.id}${qp}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ sortOrder: i }),
@@ -285,4 +286,3 @@ export default function SkillMatrix() {
     </div>
   )
 }
-

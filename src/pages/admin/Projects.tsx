@@ -5,14 +5,15 @@ import { resolveMediaUrl } from '../../lib/utils'
 
 export default function Projects() {
   const navigate = useNavigate()
-  const { token, setToken } = useStore()
+  const { token, setToken, profileKey } = useStore()
   const [projects, setProjects] = useState<any[]>([])
   const [editing, setEditing] = useState<any>(null)
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({})
   
-  const fetchProjects = () => fetch('/api/projects').then(r => r.json()).then(setProjects)
+  const qp = `?profileKey=${encodeURIComponent(profileKey)}`
+  const fetchProjects = () => fetch(`/api/projects${qp}`).then(r => r.json()).then(setProjects)
   
-  useEffect(() => { fetchProjects() }, [])
+  useEffect(() => { fetchProjects() }, [profileKey])
 
   const handleAuthFailure = async (res: Response) => {
     if (res.status !== 401) return
@@ -43,7 +44,7 @@ export default function Projects() {
       return
     }
     const method = editing.id ? 'PUT' : 'POST'
-    const url = editing.id ? `/api/projects/${editing.id}` : '/api/projects'
+    const url = editing.id ? `/api/projects/${editing.id}${qp}` : `/api/projects${qp}`
     
     const res = await fetch(url, {
       method,
@@ -67,7 +68,7 @@ export default function Projects() {
       navigate('/console-center/login')
       return
     }
-    const res = await fetch(`/api/projects/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+    const res = await fetch(`/api/projects/${id}${qp}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
     await handleAuthFailure(res)
     if (!res.ok) {
       const data = await res.json().catch(() => null)
@@ -85,7 +86,7 @@ export default function Projects() {
     }
     const nextIsVisible = !p.isVisible
     setProjects(prev => prev.map(item => item.id === p.id ? { ...item, isVisible: nextIsVisible } : item))
-    const res = await fetch(`/api/projects/${p.id}`, {
+    const res = await fetch(`/api/projects/${p.id}${qp}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ ...projectPayload(p), isVisible: nextIsVisible })

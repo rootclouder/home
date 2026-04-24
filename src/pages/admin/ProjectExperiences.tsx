@@ -4,24 +4,25 @@ import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useStore } from '../../store'
 
 export default function ProjectExperiences() {
-  const token = useStore(state => state.token)
+  const { token, profileKey } = useStore()
+  const qp = `?profileKey=${encodeURIComponent(profileKey)}`
   const [experiences, setExperiences] = useState<any[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [current, setCurrent] = useState<any>(null)
 
   const fetchExperiences = async () => {
-    const res = await fetch('/api/project-experiences')
+    const res = await fetch(`/api/project-experiences${qp}`)
     if (res.ok) setExperiences(await res.json())
   }
 
   useEffect(() => {
     fetchExperiences()
-  }, [])
+  }, [profileKey])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     const method = current.id ? 'PUT' : 'POST'
-    const url = current.id ? `/api/project-experiences/${current.id}` : '/api/project-experiences'
+    const url = current.id ? `/api/project-experiences/${current.id}${qp}` : `/api/project-experiences${qp}`
 
     await fetch(url, {
       method,
@@ -39,7 +40,7 @@ export default function ProjectExperiences() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除这条项目经历吗？')) return
-    await fetch(`/api/project-experiences/${id}`, {
+    await fetch(`/api/project-experiences/${id}${qp}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -58,7 +59,7 @@ export default function ProjectExperiences() {
 
     await Promise.all(
       next.map((exp, i) =>
-        fetch(`/api/project-experiences/${exp.id}`, {
+        fetch(`/api/project-experiences/${exp.id}${qp}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ export default function ProjectExperiences() {
     // 乐观更新
     setExperiences(experiences.map(e => e.id === exp.id ? { ...e, isVisible: !e.isVisible } : e))
     try {
-      const res = await fetch(`/api/project-experiences/${exp.id}`, {
+      const res = await fetch(`/api/project-experiences/${exp.id}${qp}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

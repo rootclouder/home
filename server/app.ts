@@ -20,6 +20,7 @@ import workExperiencesRoutes from './routes/work-experiences.js'
 import projectExperiencesRoutes from './routes/project-experiences.js'
 import skillMatrixRoutes from './routes/skill-matrix.js'
 import mediaRoutes from './routes/media.js'
+import profilesRoutes from './routes/profiles.js'
 
 // fallback for CommonJS or ESM
 const _dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
@@ -37,6 +38,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }))
  * API Routes
  */
 app.use('/api/auth', authRoutes)
+app.use('/api/profiles', profilesRoutes)
 app.use('/api/settings', settingsRoutes)
 app.use('/api/projects', projectsRoutes)
 app.use('/api/categories', categoriesRoutes)

@@ -5,6 +5,8 @@ interface AppState {
   setToken: (token: string | null) => void
   user: any | null
   setUser: (user: any | null) => void
+  profileKey: string
+  setProfileKey: (profileKey: string) => void
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -16,4 +18,9 @@ export const useStore = create<AppState>((set) => ({
   },
   user: null,
   setUser: (user) => set({ user }),
+  profileKey: localStorage.getItem('admin_profile_key') || 'default',
+  setProfileKey: (profileKey) => {
+    localStorage.setItem('admin_profile_key', profileKey)
+    set({ profileKey })
+  }
 }))

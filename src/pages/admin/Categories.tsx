@@ -83,18 +83,19 @@ function SortableCategoryItem({ id, category: c, onEdit, onDelete, onAddSub }: S
 }
 
 export default function Categories() {
-  const { token } = useStore()
+  const { token, profileKey } = useStore()
   const [categories, setCategories] = useState<any[]>([])
   const [editing, setEditing] = useState<any>(null)
   
-  const fetchCategories = () => fetch('/api/categories').then(r => r.json()).then(setCategories)
+  const qp = `?profileKey=${encodeURIComponent(profileKey)}`
+  const fetchCategories = () => fetch(`/api/categories${qp}`).then(r => r.json()).then(setCategories)
   
-  useEffect(() => { fetchCategories() }, [])
+  useEffect(() => { fetchCategories() }, [profileKey])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     const method = editing.id ? 'PUT' : 'POST'
-    const url = editing.id ? `/api/categories/${editing.id}` : '/api/categories'
+    const url = editing.id ? `/api/categories/${editing.id}${qp}` : `/api/categories${qp}`
     
     await fetch(url, {
       method,
@@ -110,7 +111,7 @@ export default function Categories() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确认删除？如果包含子栏目，请先删除子栏目。')) return
-    await fetch(`/api/categories/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+    await fetch(`/api/categories/${id}${qp}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
     fetchCategories()
   }
 
@@ -231,7 +232,7 @@ export default function Categories() {
 
     // Save to backend
     try {
-      await fetch('/api/categories/reorder', {
+      await fetch(`/api/categories/reorder${qp}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ items: updates })

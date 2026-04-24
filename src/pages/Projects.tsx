@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { Project } from '@prisma/client'
@@ -23,14 +23,18 @@ interface ExtendedSetting {
 }
 
 export default function Projects() {
+  const { key } = useParams()
+  const profileKey = key || 'default'
+  const basePath = key && key !== 'default' ? `/${key}` : ''
+
   const [projects, setProjects] = useState<ExtendedProject[]>([])
   const [settings, setSettings] = useState<ExtendedSetting | null>(null)
 
   useEffect(() => {
-    fetch('/api/projects')
+    fetch(`/api/projects?profileKey=${encodeURIComponent(profileKey)}`)
       .then(res => res.json())
       .then(data => setProjects(data))
-    fetch('/api/settings')
+    fetch(`/api/settings?profileKey=${encodeURIComponent(profileKey)}`)
       .then(res => res.json())
       .then(data => {
     if (data?.themeColor) {
@@ -45,7 +49,7 @@ export default function Projects() {
           document.documentElement.style.setProperty('--primary-rgb', hex2rgb(data.themeColor))
         }
       })
-  }, [])
+  }, [profileKey])
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white selection:bg-[var(--primary)] selection:text-white">
@@ -78,7 +82,7 @@ export default function Projects() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center transition-transform hover:scale-105">
+          <Link to={`${basePath}/`} className="flex items-center transition-transform hover:scale-105">
             <img 
               src={resolveMediaUrl(settings?.faviconUrl) || '/favicon.svg'} 
               alt="Site Logo" 
@@ -86,9 +90,9 @@ export default function Projects() {
             />
           </Link>
           <div className="flex items-center space-x-6 text-sm font-medium">
-            <Link to="/" className="hover:text-[var(--primary)] transition-colors">首页</Link>
-            <Link to="/projects" className="hover:text-[var(--primary)] transition-colors">作品集</Link>
-            <Link to="/articles" className="hover:text-[var(--primary)] transition-colors">博客</Link>
+            <Link to={`${basePath}/`} className="hover:text-[var(--primary)] transition-colors">首页</Link>
+            <Link to={`${basePath}/projects`} className="hover:text-[var(--primary)] transition-colors">作品集</Link>
+            <Link to={`${basePath}/articles`} className="hover:text-[var(--primary)] transition-colors">博客</Link>
           </div>
         </div>
       </nav>

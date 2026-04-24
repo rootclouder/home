@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Folder, ChevronRight, X, FileText } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -19,6 +19,10 @@ interface ExtendedSetting {
 }
 
 export default function Articles() {
+  const { key } = useParams()
+  const profileKey = key || 'default'
+  const basePath = key && key !== 'default' ? `/${key}` : ''
+
   const [settings, setSettings] = useState<ExtendedSetting | null>(null)
   const [categories, setCategories] = useState<any[]>([])
   const [posts, setPosts] = useState<any[]>([])
@@ -37,9 +41,9 @@ export default function Articles() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/settings').then(r => r.ok ? r.json() : null),
-      fetch('/api/categories').then(r => r.ok ? r.json() : []),
-      fetch('/api/posts').then(r => r.ok ? r.json() : [])
+      fetch(`/api/settings?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : null),
+      fetch(`/api/categories?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : []),
+      fetch(`/api/posts?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : [])
     ]).then(([s, c, po]) => {
       setSettings(s ? { ...s } : { siteTitle: 'My Project', themeColor: '#000' })
       setCategories(c || [])
@@ -68,7 +72,7 @@ export default function Articles() {
       console.error('Failed to load data:', e)
       setSettings({ siteTitle: 'Error', themeColor: '#000' })
     })
-  }, [])
+  }, [profileKey])
 
   const { tree, map } = useMemo(() => {
     const tree: any[] = []
@@ -189,7 +193,7 @@ export default function Articles() {
         <nav className="sticky top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
           <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <div className="flex items-center">
-              <Link to="/" className="flex items-center transition-transform hover:scale-105">
+              <Link to={`${basePath}/`} className="flex items-center transition-transform hover:scale-105">
                 <img 
                     src={resolveMediaUrl(settings?.faviconUrl) || '/favicon.svg'}
                   alt="Site Logo" 
@@ -198,9 +202,9 @@ export default function Articles() {
               </Link>
             </div>
             <div className="flex items-center space-x-6 text-sm font-medium">
-              <Link to="/" className="hover:text-[var(--primary)] transition-colors">首页</Link>
-              <Link to="/projects" className="hover:text-[var(--primary)] transition-colors">作品集</Link>
-              <Link to="/articles" className="text-[var(--primary)] transition-colors">博客</Link>
+              <Link to={`${basePath}/`} className="hover:text-[var(--primary)] transition-colors">首页</Link>
+              <Link to={`${basePath}/projects`} className="hover:text-[var(--primary)] transition-colors">作品集</Link>
+              <Link to={`${basePath}/articles`} className="text-[var(--primary)] transition-colors">博客</Link>
             </div>
           </div>
         </nav>

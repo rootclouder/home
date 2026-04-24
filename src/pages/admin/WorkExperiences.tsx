@@ -6,14 +6,15 @@ export default function WorkExperiences() {
   const [experiences, setExperiences] = useState<any[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [currentExp, setCurrentExp] = useState<any>(null)
-  const token = useStore(state => state.token)
+  const { token, profileKey } = useStore()
+  const qp = `?profileKey=${encodeURIComponent(profileKey)}`
 
   useEffect(() => {
     fetchExperiences()
-  }, [])
+  }, [profileKey])
 
   const fetchExperiences = async () => {
-    const res = await fetch('/api/work-experiences')
+    const res = await fetch(`/api/work-experiences${qp}`)
     if (res.ok) {
       setExperiences(await res.json())
     }
@@ -22,7 +23,7 @@ export default function WorkExperiences() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     const method = currentExp.id ? 'PUT' : 'POST'
-    const url = currentExp.id ? `/api/work-experiences/${currentExp.id}` : '/api/work-experiences'
+    const url = currentExp.id ? `/api/work-experiences/${currentExp.id}${qp}` : `/api/work-experiences${qp}`
     
     await fetch(url, {
       method,
@@ -40,7 +41,7 @@ export default function WorkExperiences() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除这条工作经历吗？')) return
-    await fetch(`/api/work-experiences/${id}`, {
+    await fetch(`/api/work-experiences/${id}${qp}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -59,7 +60,7 @@ export default function WorkExperiences() {
 
     // Update all order values
     await Promise.all(newExps.map((exp, i) => 
-      fetch(`/api/work-experiences/${exp.id}`, {
+      fetch(`/api/work-experiences/${exp.id}${qp}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

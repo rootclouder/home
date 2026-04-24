@@ -3,7 +3,7 @@ import { Github, Twitter, Mail, ArrowRight, X } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
 import Typewriter from 'typewriter-effect'
 import FloatingRobot from '../components/FloatingRobot'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import type { Project, Post, Category, WorkExperience, ProjectExperience } from '@prisma/client'
 import { resolveMediaUrl } from '../lib/utils'
@@ -22,6 +22,10 @@ interface ExtendedSetting {
 }
 
 export default function Home() {
+  const { key } = useParams()
+  const profileKey = key || 'default'
+  const basePath = key && key !== 'default' ? `/${key}` : ''
+
   const [settings, setSettings] = useState<ExtendedSetting | null>(null)
   const [projects, setProjects] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
@@ -35,13 +39,13 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/settings').then(r => r.ok ? r.json() : null),
-      fetch('/api/projects').then(r => r.ok ? r.json() : []),
-      fetch('/api/categories').then(r => r.ok ? r.json() : []),
-      fetch('/api/posts').then(r => r.ok ? r.json() : []),
-      fetch('/api/work-experiences').then(r => r.ok ? r.json() : []),
-      fetch('/api/project-experiences').then(r => r.ok ? r.json() : []),
-      fetch('/api/skill-matrix').then(r => r.ok ? r.json() : []),
+      fetch(`/api/settings?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : null),
+      fetch(`/api/projects?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : []),
+      fetch(`/api/categories?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : []),
+      fetch(`/api/posts?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : []),
+      fetch(`/api/work-experiences?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : []),
+      fetch(`/api/project-experiences?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : []),
+      fetch(`/api/skill-matrix?profileKey=${encodeURIComponent(profileKey)}`).then(r => r.ok ? r.json() : []),
     ]).then(([s, p, c, po, exp, pexp, sm]) => {
       setSettings(s ? { ...s, badgeText: s.badgeText || 'AVAILABLE FOR NEW OPPORTUNITIES', skillsMatrixTitle: s.skillsMatrixTitle || '技能矩阵' } : { siteTitle: 'My Project', heroTitle: 'Welcome', heroSubtitle: 'Setup your site in admin panel', themeColor: '#000', badgeText: 'AVAILABLE FOR NEW OPPORTUNITIES', skillsMatrixTitle: '技能矩阵' })
       setProjects(p || [])
@@ -77,7 +81,7 @@ export default function Home() {
       console.error('Failed to load data:', e)
       setSettings({ siteTitle: 'Error', heroTitle: 'Service Unavailable', heroSubtitle: 'Could not connect to API', themeColor: '#f00', badgeText: 'ERROR', skillsMatrixTitle: 'Error' })
     })
-  }, [])
+  }, [profileKey])
 
   if (!settings) {
     return (
@@ -126,7 +130,7 @@ export default function Home() {
         {/* Navigation */}
         <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200/50 dark:border-zinc-800/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center transition-transform hover:scale-105">
+          <Link to={`${basePath}/`} className="flex items-center transition-transform hover:scale-105">
             <img 
               src={resolveMediaUrl(settings?.faviconUrl) || '/favicon.svg'} 
               alt="Site Logo" 
@@ -134,9 +138,9 @@ export default function Home() {
             />
           </Link>
           <div className="flex items-center space-x-6 text-sm font-medium">
-            <Link to="/" className="hover:text-[var(--primary)] transition-colors">首页</Link>
-            <Link to="/projects" className="hover:text-[var(--primary)] transition-colors">作品集</Link>
-            <Link to="/articles" className="hover:text-[var(--primary)] transition-colors">博客</Link>
+            <Link to={`${basePath}/`} className="hover:text-[var(--primary)] transition-colors">首页</Link>
+            <Link to={`${basePath}/projects`} className="hover:text-[var(--primary)] transition-colors">作品集</Link>
+            <Link to={`${basePath}/articles`} className="hover:text-[var(--primary)] transition-colors">博客</Link>
           </div>
         </div>
       </nav>
